@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CueMaster · SpongeBob</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --border: #2a2a3d;
+    --text: #e8e8f0;
+    --muted: #6b6b85;
+    --accent: #f0c040;
+    --accent2: #40b0f0;
+    --red: #ff4060;
+    --green: #30e090;
+    --orange: #ff8830;
+    --purple: #b060ff;
+    --blue: #40a0ff;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  #app {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    height: 100vh;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: calc(var(--safe-top) + 12px) 16px 0;
+    background: var(--bg);
+    flex-shrink: 0;
+    z-index: 10;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .app-logo { display: flex; align-items: center; gap: 8px; }
+
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .app-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 16px; font-weight: 700;
+    color: var(--accent); letter-spacing: -0.5px;
+  }
+
+  .header-actions { display: flex; gap: 8px; align-items: center; }
+
+  .workspace-badge {
+    font-size: 10px; color: var(--muted); font-weight: 500;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    max-width: 160px; text-align: right; line-height: 1.2;
+  }
+
+  .audio-lib-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 10px;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    transition: all 0.15s; white-space: nowrap;
+  }
+
+  .audio-lib-btn.has-files { border-color: var(--green); color: var(--green); }
+  .audio-lib-btn:active { opacity: 0.7; }
+
+  /* ── SHOW TABS ── */
+  .show-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+
+  .show-tab {
+    flex: 1; padding: 7px 10px; border-radius: 8px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--muted); font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 500; cursor: pointer;
+    transition: all 0.15s; text-align: left; line-height: 1.3;
+  }
+
+  .show-tab.active { background: var(--surface2); border-color: var(--accent); color: var(--accent); }
+  .show-tab-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; }
+  .show-tab.active .show-tab-label { color: var(--accent); opacity: 0.7; }
+
+  /* ── SEARCH + FILTER ── */
+  .search-bar { display: flex; gap: 8px; margin-bottom: 10px; }
+
+  .search-input {
+    flex: 1; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 9px 14px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    outline: none; transition: border-color 0.15s;
+  }
+  .search-input::placeholder { color: var(--muted); }
+  .search-input:focus { border-color: var(--accent); }
+
+  .filter-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 9px 12px;
+    color: var(--muted); cursor: pointer; font-size: 16px; transition: all 0.15s;
+  }
+  .filter-btn.active { border-color: var(--accent2); color: var(--accent2); background: var(--surface2); }
+
+  /* ── COLOR FILTER ROW ── */
+  .color-filters {
+    display: flex; gap: 6px; margin-bottom: 10px;
+    overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
+  }
+  .color-filters::-webkit-scrollbar { display: none; }
+
+  .color-chip {
+    flex-shrink: 0; padding: 4px 12px; border-radius: 20px;
+    border: 1.5px solid transparent; font-size: 11px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; text-transform: capitalize;
+  }
+  .color-chip[data-c="all"] { background: var(--surface); border-color: var(--border); color: var(--muted); }
+  .color-chip[data-c="all"].sel { border-color: var(--text); color: var(--text); background: var(--surface2); }
+  .color-chip[data-c="red"] { background: rgba(255,64,96,0.15); border-color: rgba(255,64,96,0.3); color: var(--red); }
+  .color-chip[data-c="red"].sel { background: rgba(255,64,96,0.3); border-color: var(--red); }
+  .color-chip[data-c="green"] { background: rgba(48,224,144,0.12); border-color: rgba(48,224,144,0.25); color: var(--green); }
+  .color-chip[data-c="green"].sel { background: rgba(48,224,144,0.25); border-color: var(--green); }
+  .color-chip[data-c="orange"] { background: rgba(255,136,48,0.12); border-color: rgba(255,136,48,0.25); color: var(--orange); }
+  .color-chip[data-c="orange"].sel { background: rgba(255,136,48,0.25); border-color: var(--orange); }
+  .color-chip[data-c="purple"] { background: rgba(176,96,255,0.12); border-color: rgba(176,96,255,0.25); color: var(--purple); }
+  .color-chip[data-c="purple"].sel { background: rgba(176,96,255,0.25); border-color: var(--purple); }
+  .color-chip[data-c="none"] { background: var(--surface); border-color: var(--border); color: var(--muted); }
+  .color-chip[data-c="none"].sel { border-color: var(--muted); background: var(--surface2); }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: flex; gap: 12px; padding: 8px 0;
+    border-top: 1px solid var(--border);
+  }
+  .stat { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .stat-num { font-family: 'Space Mono', monospace; font-size: 15px; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ── CUE LIST ── */
+  .cue-list {
+    flex: 1; overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 8px 0 calc(var(--safe-bottom) + 8px);
+  }
+  .cue-list::-webkit-scrollbar { display: none; }
+
+  /* ── CUE CARD ── */
+  .cue-card {
+    margin: 4px 12px; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--surface);
+    overflow: hidden; transition: all 0.15s; cursor: pointer;
+  }
+  .cue-card:active { transform: scale(0.985); }
+  .cue-card.expanded { border-color: var(--accent2); }
+  .cue-card.current { border-color: var(--accent); background: rgba(240,192,64,0.06); }
+  .cue-card.current .cue-number { color: var(--accent); }
+  .cue-card.playing { border-color: var(--green) !important; background: rgba(48,224,144,0.05) !important; }
+
+  .cue-main { display: flex; align-items: center; padding: 10px 14px; gap: 10px; }
+
+  .cue-color-bar { width: 4px; height: 36px; border-radius: 2px; flex-shrink: 0; }
+
+  .cue-number {
+    font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700;
+    color: var(--accent); min-width: 38px; flex-shrink: 0;
+  }
+
+  .cue-info { flex: 1; min-width: 0; }
+
+  .cue-name {
+    font-size: 14px; font-weight: 500; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3;
+  }
+  .cue-name.empty { color: var(--muted); font-style: italic; }
+
+  .cue-filename {
+    font-size: 11px; color: var(--muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;
+  }
+
+  .cue-meta { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .cue-duration { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); }
+
+  .cue-type-badge {
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; padding: 2px 6px; border-radius: 4px;
+  }
+  .type-Audio { background: rgba(64,176,240,0.15); color: var(--accent2); }
+  .type-Group { background: rgba(240,192,64,0.15); color: var(--accent); }
+
+  .cue-flags { display: flex; gap: 4px; align-items: center; }
+  .flag-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .flag-follow { background: var(--green); }
+  .flag-armed-off { background: var(--red); opacity: 0.6; }
+
+  .audio-status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .audio-status-dot.linked { background: var(--green); }
+  .audio-status-dot.playing { background: var(--accent); animation: pulse 0.8s infinite; }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .chevron { font-size: 12px; color: var(--muted); transition: transform 0.2s; flex-shrink: 0; }
+  .cue-card.expanded .chevron { transform: rotate(90deg); }
+
+  /* ── EXPANDED DETAIL ── */
+  .cue-detail { display: none; padding: 0 14px 12px; border-top: 1px solid var(--border); }
+  .cue-card.expanded .cue-detail { display: block; }
+
+  /* ── AUDIO PLAYER ── */
+  .cue-player {
+    margin-top: 10px;
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+  }
+
+  .player-filename {
+    font-size: 11px; color: var(--muted);
+    margin-bottom: 8px; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .player-controls {
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .play-pause-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--accent); color: #000;
+    border: none; font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.1s;
+  }
+  .play-pause-btn:active { transform: scale(0.92); }
+
+  .player-progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+
+  .progress-bar-track {
+    width: 100%; height: 4px; background: var(--border);
+    border-radius: 2px; cursor: pointer; position: relative;
+  }
+
+  .progress-bar-fill {
+    height: 100%; background: var(--accent);
+    border-radius: 2px; width: 0%; transition: width 0.1s linear;
+    pointer-events: none;
+  }
+
+  .player-times {
+    display: flex; justify-content: space-between;
+    font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted);
+  }
+
+  .player-not-linked {
+    background: var(--surface2); border-radius: 10px;
+    padding: 10px 12px; margin-top: 10px;
+    display: flex; align-items: center; gap: 10px;
+    border: 1px dashed var(--border);
+  }
+
+  .link-audio-btn {
+    flex-shrink: 0; background: var(--surface);
+    border: 1px solid var(--accent2); color: var(--accent2);
+    border-radius: 8px; padding: 6px 12px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    white-space: nowrap; transition: all 0.15s;
+  }
+  .link-audio-btn:active { opacity: 0.7; }
+
+  .not-linked-msg { font-size: 11px; color: var(--muted); flex: 1; }
+
+  /* ── DETAIL GRID ── */
+  .detail-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;
+  }
+
+  .detail-item { background: var(--surface2); border-radius: 8px; padding: 8px 10px; }
+  .detail-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 3px; }
+  .detail-value { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--text); }
+
+  .continue-mode-0 { color: var(--muted); }
+  .continue-mode-2 { color: var(--green); }
+
+  .notes-section {
+    margin-top: 10px; background: var(--surface2);
+    border-radius: 8px; padding: 10px; border-left: 3px solid var(--accent2);
+  }
+  .notes-header { font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent2); margin-bottom: 6px; }
+  .notes-text { font-size: 12px; color: var(--text); line-height: 1.6; white-space: pre-wrap; }
+
+  .sub-cue-row { background: var(--surface2); border-radius: 6px; padding: 6px 10px; margin-bottom: 4px; font-size: 11px; color: var(--muted); }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 60px 20px; color: var(--muted); gap: 8px;
+  }
+  .empty-icon { font-size: 48px; opacity: 0.3; }
+  .empty-text { font-size: 14px; }
+
+  /* ── BOTTOM CONTROLS ── */
+  .bottom-bar {
+    flex-shrink: 0; background: var(--surface); border-top: 1px solid var(--border);
+    padding: 10px 16px calc(var(--safe-bottom) + 10px);
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .go-btn {
+    flex: 1; background: var(--accent); color: #000; border: none;
+    border-radius: 12px; padding: 14px;
+    font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700;
+    letter-spacing: 1px; cursor: pointer; transition: all 0.1s;
+  }
+  .go-btn:active { transform: scale(0.97); background: #d4a830; }
+
+  .prev-btn, .next-btn {
+    width: 48px; height: 48px; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--surface2);
+    color: var(--text); font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.1s;
+  }
+  .prev-btn:active, .next-btn:active { background: var(--border); }
+
+  .current-cue-display {
+    font-family: 'Space Mono', monospace; font-size: 11px; text-align: center; flex-shrink: 0;
+  }
+  .current-cue-num { color: var(--accent); font-size: 18px; font-weight: 700; display: block; }
+  .current-cue-of { color: var(--muted); font-size: 9px; letter-spacing: 0.5px; }
+
+  /* ── AUDIO LIBRARY PANEL ── */
+  .panel-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.7);
+    z-index: 50; display: none; align-items: flex-end;
+    backdrop-filter: blur(4px);
+  }
+  .panel-overlay.open { display: flex; }
+
+  .audio-panel {
+    width: 100%; background: var(--surface);
+    border-radius: 20px 20px 0 0; border-top: 1px solid var(--border);
+    padding-bottom: calc(var(--safe-bottom) + 16px);
+    max-height: 85vh; display: flex; flex-direction: column;
+    animation: slideUp 0.25s ease;
+  }
+
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: none; } }
+
+  .panel-handle {
+    width: 36px; height: 4px; background: var(--border);
+    border-radius: 2px; margin: 12px auto 0;
+  }
+
+  .panel-header {
+    padding: 12px 16px 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .panel-title {
+    font-family: 'Space Mono', monospace; font-size: 14px;
+    font-weight: 700; color: var(--accent);
+  }
+
+  .panel-close {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--surface2); border: none;
+    color: var(--muted); font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .panel-desc {
+    padding: 8px 16px 12px;
+    font-size: 12px; color: var(--muted); line-height: 1.5;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-desc strong { color: var(--text); }
+
+  .import-actions {
+    padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .import-btn {
+    width: 100%; padding: 14px 16px;
+    border-radius: 12px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    cursor: pointer; display: flex; align-items: center; gap: 12px;
+    transition: all 0.15s; text-align: left;
+  }
+  .import-btn:active { background: var(--border); }
+  .import-btn.primary { background: rgba(240,192,64,0.1); border-color: var(--accent); color: var(--accent); }
+  .import-btn.primary:active { background: rgba(240,192,64,0.2); }
+
+  .import-btn-icon { font-size: 22px; flex-shrink: 0; }
+  .import-btn-text { display: flex; flex-direction: column; gap: 2px; }
+  .import-btn-label { font-size: 14px; font-weight: 600; }
+  .import-btn-sub { font-size: 11px; color: var(--muted); }
+  .import-btn.primary .import-btn-sub { color: rgba(240,192,64,0.7); }
+
+  .panel-library { flex: 1; overflow-y: auto; padding: 0 16px 8px; }
+  .panel-library::-webkit-scrollbar { display: none; }
+
+  .library-section-label {
+    font-size: 10px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px; padding: 10px 0 6px;
+  }
+
+  .library-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 10px;
+    background: var(--surface2); margin-bottom: 5px;
+    border: 1px solid var(--border);
+  }
+
+  .lib-item-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .lib-matched { background: var(--green); }
+  .lib-unmatched { background: var(--border); }
+
+  .lib-item-name { flex: 1; font-size: 12px; color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lib-item-cue { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; flex-shrink: 0; }
+  .lib-item-size { font-size: 10px; color: var(--muted); flex-shrink: 0; }
+
+  .lib-remove { background: none; border: none; color: var(--muted); font-size: 14px; cursor: pointer; padding: 2px 4px; flex-shrink: 0; }
+  .lib-remove:active { color: var(--red); }
+
+  .library-summary {
+    padding: 10px 16px;
+    background: var(--surface2);
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .lib-summary-text { font-size: 12px; color: var(--muted); }
+  .lib-summary-text strong { color: var(--green); }
+
+  .clear-lib-btn {
+    background: none; border: 1px solid var(--border); border-radius: 8px;
+    padding: 5px 10px; color: var(--muted); font-size: 11px; cursor: pointer;
+  }
+  .clear-lib-btn:active { border-color: var(--red); color: var(--red); }
+
+  .import-tip {
+    margin: 0 16px 12px;
+    padding: 10px 12px;
+    background: rgba(64,176,240,0.08);
+    border: 1px solid rgba(64,176,240,0.2);
+    border-radius: 10px;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .import-tip strong { color: var(--accent2); }
+
+  /* ── COLOR CODING ── */
+  .cc-red { background: var(--red); }
+  .cc-green { background: var(--green); }
+  .cc-orange { background: var(--orange); }
+  .cc-purple { background: var(--purple); }
+  .cc-blue { background: var(--blue); }
+  .cc-none { background: var(--border); }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .cue-card { animation: fadeIn 0.15s ease; }
+  ::-webkit-scrollbar { width: 0; height: 0; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="header-top">
+      <div class="app-logo">
+        <div class="logo-icon">🎬</div>
+        <span class="app-title">CUEMASTER</span>
+      </div>
+      <div class="header-actions">
+        <button class="audio-lib-btn" id="audio-lib-btn" onclick="openPanel()">
+          <span id="lib-btn-icon">🎵</span>
+          <span id="lib-btn-label">Audio Library</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="show-tabs" id="show-tabs"></div>
+
+    <div class="search-bar">
+      <input type="search" class="search-input" id="search" placeholder="Search cues, files, notes…" autocomplete="off" autocorrect="off" spellcheck="false">
+      <button class="filter-btn" id="notes-filter-btn" title="Show only cues with notes" onclick="toggleNotesFilter()">📝</button>
+    </div>
+
+    <div class="color-filters" id="color-filters"></div>
+    <div class="stats-bar" id="stats-bar"></div>
+  </header>
+
+  <div class="cue-list" id="cue-list"></div>
+
+  <div class="bottom-bar">
+    <button class="prev-btn" onclick="moveCurrent(-1)">‹</button>
+    <div class="current-cue-display">
+      <span class="current-cue-num" id="current-num">—</span>
+      <span class="current-cue-of" id="current-of">CUE</span>
+    </div>
+    <button class="go-btn" onclick="goNext()">▶ GO</button>
+    <button class="next-btn" onclick="moveCurrent(1)">›</button>
+  </div>
+
+  <!-- AUDIO LIBRARY PANEL -->
+  <div class="panel-overlay" id="panel-overlay" onclick="handleOverlayClick(event)">
+    <div class="audio-panel">
+      <div class="panel-handle"></div>
+      <div class="panel-header">
+        <span class="panel-title">🎵 AUDIO LIBRARY</span>
+        <button class="panel-close" onclick="closePanel()">✕</button>
+      </div>
+      <div class="panel-desc">
+        Import your audio files from <strong>iCloud Drive, Google Drive, Dropbox, or your iPhone</strong>. 
+        Files are matched to cues automatically by filename. They stay in memory for this session.
+      </div>
+
+      <div class="import-actions">
+        <button class="import-btn primary" onclick="pickFiles()">
+          <span class="import-btn-icon">📂</span>
+          <div class="import-btn-text">
+            <span class="import-btn-label">Select Files…</span>
+            <span class="import-btn-sub">Pick individual files — iCloud, Google Drive, Dropbox, On My iPhone</span>
+          </div>
+        </button>
+        <button class="import-btn" onclick="pickFolder()">
+          <span class="import-btn-icon">🗂️</span>
+          <div class="import-btn-text">
+            <span class="import-btn-label">Select Entire Folder…</span>
+            <span class="import-btn-sub">Imports all audio files inside a folder at once</span>
+          </div>
+        </button>
+      </div>
+      <div class="import-tip">
+        💡 <strong>Tip:</strong> If files appear greyed out, tap <strong>Browse</strong> in the Files picker to navigate to iCloud Drive, Google Drive or Dropbox. Any mp3, wav, m4a, aiff or flac file will work.
+      </div>
+
+      <div class="panel-library" id="panel-library">
+        <div class="library-section-label">Loaded Files</div>
+        <div id="library-list">
+          <div class="empty-state" style="padding:20px">
+            <div class="empty-icon" style="font-size:32px">📭</div>
+            <div class="empty-text" style="font-size:12px">No files imported yet</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="library-summary" id="library-summary" style="display:none">
+        <span class="lib-summary-text" id="lib-summary-text">0 files</span>
+        <button class="clear-lib-btn" onclick="clearLibrary()">Clear all</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden file inputs -->
+  <!-- No accept= filter: iOS Safari greys out mp3/m4a with audio/* MIME filter -->
+  <input type="file" id="file-picker" multiple style="display:none" onchange="handleFiles(this.files)">
+  <!-- Folder picker (works on Safari desktop + Chrome/Firefox mobile via Files app) -->
+  <input type="file" id="folder-picker" multiple webkitdirectory style="display:none" onchange="handleFiles(this.files)">
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// CUE DATA
+// ─────────────────────────────────────────────
+const DATA = {"files":[{"workspaceName":"Abu Dhabi — Jul 16","cueListName":"Main Cue List","cues":[{"id":"67","number":"1","name":"","color":"orange","type":"Audio","filename":"SB Q01.mp3","relativePath":"audio/SB Q01.mp3","duration":53.496,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"With House lights","cues":[]},{"id":"66","number":"2","name":"","color":"orange","type":"Audio","filename":"SB Q02.mp3","relativePath":"audio/SB Q02.mp3","duration":8.832,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-THATS FISH TASTIC FOLKS! WELL DONE! - SPACE\nP.3 News beeps","cues":[]},{"id":"65","number":"3","name":"","color":"orange","type":"Audio","filename":"SB Q03.mp3","relativePath":"audio/SB Q03.mp3","duration":3.552,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-BACK TO THE STUDIO! -SPACE\nP.5 News beeps","cues":[]},{"id":"64","number":"4","name":"","color":"orange","type":"Audio","filename":"SB Q04 Alt A.mp3","relativePath":"audio/SB Q04 Alt A.mp3","duration":102.0,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-IT’S SPONGEBOB SQUAREPANTS! (beat) - SPACE\nP.5 SBSP Theme song","cues":[]},{"id":"62","number":"5","name":"","color":"purple","type":"Audio","filename":"SB Q05.mp3","relativePath":"audio/SB Q05.mp3","duration":138.096,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-BACK TO THE STUDIO! - SPACE\nP.7 News beeps and in to scene change","cues":[]},{"id":"61","number":"6","name":"","color":"purple","type":"Audio","filename":"SB Q06.mp3","relativePath":"audio/SB Q06.mp3","duration":26.352,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH- MAY I HAVE A WORD SPONGEBOB? - SPACE\nP.9 secretive chat with SB & music","cues":[]},{"id":"60","number":"7","name":"","color":"purple","type":"Audio","filename":"SB Q07.mp3","relativePath":"audio/SB Q07.mp3","duration":1.224,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-LETS HEAR YA FISHY FLIPSTERS! (beat) SPACE\nP.10 SB whoop for joy!","cues":[]},{"id":"59","number":"8","name":"","color":"purple","type":"Audio","filename":"SB Q08 Follow.mp3","relativePath":"audio/SB Q08 Follow.mp3","duration":75.672,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":2,"armed":true,"flagged":false,"notes":"WATCH- when Squidward enters SL and gets to  centre stage\nP.11 Squidward & SB chat","cues":[]},{"id":"58","number":"9","name":"","color":"purple","type":"Audio","filename":"SB Q09.mp3","relativePath":"audio/SB Q09.mp3","duration":71.496,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"FOLLOW ON\nP.13 ","cues":[]},{"id":"68","number":"9.5","name":"","color":"green","type":"Audio","filename":"SB Q09.5.mp3","relativePath":"audio/SB Q09.5.mp3","duration":50.088,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-I CAN NOW REVEAL I HAVE AN INSIDE EXCLUSIVE TO HIS REHEARSAL\nP.14 SB starts warming up & stretching","cues":[]},{"id":"72","number":"10","name":"SB Q10 STOP","color":"red","type":"Group","filename":"","relativePath":"","duration":0.0,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"WATCH - as SpongeBob hits the button on the music player\nP.15 (after Perch says we’ll get a glimpse in to his routine) JellFish Jam music","cues":[{"id":null,"number":"","name":"","color":"none","type":"Group","filename":"","relativePath":"","duration":0.0,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":false,"flagged":false,"notes":"","cues":[]},{"id":null,"number":"","name":"","color":"none","type":"Group","filename":"","relativePath":"","duration":0.0,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":false,"flagged":false,"notes":"","cues":[]}]},{"id":"56","number":"11","name":"","color":"green","type":"Audio","filename":"SB Q11.mp3","relativePath":"audio/SB Q11.mp3","duration":36.408,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-I’VE GOT A FEELING YOU’RE GONNA NEED THEM LATER (beat) - SPACE\nP.18 Patrick : so weak and on","cues":[]},{"id":"55","number":"12","name":"","color":"green","type":"Audio","filename":"SB Q12.mp3","relativePath":"audio/SB Q12.mp3","duration":22.008,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-SPONGEBOB IS GONNA GET EXTRA TRAINING FOR THE AUDITION. WHATEVER NEXT? - SPACE\nP.19 SB what are you doing Squidward?","cues":[]},{"id":"54","number":"13","name":"","color":"green","type":"Audio","filename":"SB Q13.mp3","relativePath":"audio/SB Q13.mp3","duration":18.936,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-I WONDER WHAT THE RESULTS WILL BE? - SPACE\nP.20 Rex : Meep meep meep!","cues":[]},{"id":"53","number":"14","name":"","color":"green","type":"Audio","filename":"SB Q14.mp3","relativePath":"audio/SB Q14.mp3","duration":46.896,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-COULD THHIS BE THE END BEFORE ITS BEGUN? - SPACE\nP.21 Rex : SB! Patrick run on the spot!","cues":[]},{"id":"52","number":"15","name":"","color":"green","type":"Audio","filename":"SB Q15 Follow.mp3","relativePath":"audio/SB Q15 Follow.mp3","duration":59.356,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":2,"armed":true,"flagged":false,"notes":"PERCH-BACK TO THE STUDIO! - SPACE\nP.23 News Beeps in to Rex","cues":[]},{"id":"51","number":"16","name":"","color":"green","type":"Audio","filename":"SB Q16 Follow.mp3","relativePath":"audio/SB Q16 Follow.mp3","duration":77.472,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":2,"armed":true,"flagged":false,"notes":"FOLLOW ON\nP.24 Tchaikovsky","cues":[]},{"id":"50","number":"17","name":"","color":"green","type":"Audio","filename":"SB Q17 Follow.mp3","relativePath":"audio/SB Q17 Follow.mp3","duration":103.848,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":2,"armed":true,"flagged":false,"notes":"FOLLOW ON\nP.26 SQ : Enough!","cues":[]},{"id":"48","number":"18","name":"","color":"purple","type":"Audio","filename":"SB Q18 Alt B.mp3","relativePath":"audio/SB Q18 Alt B.mp3","duration":55.104,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"FOLLOW ON\nP.29 scene change - night at the oscars!","cues":[]},{"id":"47","number":"19","name":"","color":"purple","type":"Audio","filename":"SB Q19.mp3","relativePath":"audio/SB Q19.mp3","duration":7.776,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"WAIT - after PERCH-LETS HEAR YA FISHY FLIPSTERS! - AUDIENCE REACTION - SPACE\nP.30 Singing clams - doh a dear","cues":[]},{"id":"46","number":"20","name":"","color":"purple","type":"Audio","filename":"SB Q20.mp3","relativePath":"audio/SB Q20.mp3","duration":4.416,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH- (quietly to off stage) SPONGEBOB? PATRICK? ARE YOU THERE? - SPACE\nP.31 Singing Clams - dum dum dum dahhh","cues":[]},{"id":"45","number":"21","name":"","color":"purple","type":"Audio","filename":"SB Q21.mp3","relativePath":"audio/SB Q21.mp3","duration":26.016,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH- IS THERE ANYONE OUT THERE WHO CAN SAVE THIS TERRIBLE MOMENT? \nP.32 Dance troupe entrance","cues":[]},{"id":"44","number":"22","name":"","color":"purple","type":"Audio","filename":"SB Q22.mp3","relativePath":"audio/SB Q22.mp3","duration":69.576,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-I GIVE YOU THE OCEAN MOTION DANCE TROUPE! - SPACE\nP.33 Give it all you’ve got! music","cues":[]},{"id":"43","number":"23","name":"","color":"purple","type":"Audio","filename":"SB Q23.mp3","relativePath":"audio/SB Q23.mp3","duration":8.784,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH- WHAT HAPPENED TO MY TALENT SEARCH? - SPACE\nP.36 Rex : well isn’t it obvious….","cues":[]},{"id":"42","number":"24","name":"","color":"purple","type":"Audio","filename":"SB Q24.mp3","relativePath":"audio/SB Q24.mp3","duration":28.44,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-I’D LIKE TO GET TO THE BOTTOM OF THIS!\nP.36 Inspector clueso moment","cues":[]},{"id":"41","number":"25","name":"","color":"purple","type":"Audio","filename":"SB Q25.mp3","relativePath":"audio/SB Q25.mp3","duration":5.328,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-IT WAS YOU SABOTAGING THEIR AUDITION!\nP.37 Anchovies : Meep meep meep","cues":[]},{"id":"40","number":"26","name":"","color":"purple","type":"Audio","filename":"SB Q26.mp3","relativePath":"audio/SB Q26.mp3","duration":68.712,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-NOW OFF MY STAGE! BE GONE! - SPACE\nP.37 Patrick : You’re so good at figuruing out this kinda stuff","cues":[]},{"id":"74","number":"27","name":"SB Q27 Stop","color":"red","type":"Group","filename":"","relativePath":"","duration":0.0,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"After AUDIENCE shouts - WAKE UP! - WATCH SB as he jumps\nP.38 SB : Whoooo!","cues":[{"id":null,"number":"","name":"","color":"none","type":"Group","filename":"","relativePath":"","duration":0.0,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":false,"flagged":false,"notes":"","cues":[]},{"id":null,"number":"","name":"","color":"none","type":"Group","filename":"","relativePath":"","duration":0.0,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":false,"flagged":false,"notes":"","cues":[]}]},{"id":"38","number":"28","name":"","color":"purple","type":"Audio","filename":"SB Q28.mp3","relativePath":"audio/SB Q28.mp3","duration":8.352,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"PERCH-I THINK TAHTS A YES. YOU CAN ALL DANCE TOGETHER! - SPACE\nP.39 Rex : Thank you thank you…","cues":[]},{"id":"37","number":"29","name":"","color":"purple","type":"Audio","filename":"SB Q29 Follow.mp3","relativePath":"audio/SB Q29 Follow.mp3","duration":108.888,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":2,"armed":true,"flagged":false,"notes":"PERCH- ….OR STAND IN YOUR SEATS. HERE WE GO! - SPACE\nP.39 Doing the Sponge Finale","cues":[]},{"id":"36","number":"30","name":"","color":"purple","type":"Audio","filename":"SB Q30.mp3","relativePath":"audio/SB Q30.mp3","duration":47.256,"startTime":0.0,"preWait":0.0,"postWait":0.0,"continueMode":0,"armed":true,"flagged":false,"notes":"FOLLOW ON\nP.41  playout","cues":[]}]}]};
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let activeFile = 0;
+let activeColorFilter = 'all';
+let notesFilterOn = false;
+let searchQuery = '';
+let currentCueIdx = 0;
+let expandedId = null;
+
+// Audio library: filename (lowercase) -> { audio: HTMLAudioElement, name, size }
+let audioLibrary = {};
+// Currently playing cueId
+let nowPlayingId = null;
+
+// ─────────────────────────────────────────────
+// AUDIO LIBRARY
+// ─────────────────────────────────────────────
+function pickFiles() {
+  const p = document.getElementById('file-picker');
+  p.removeAttribute('webkitdirectory');
+  p.value = '';
+  p.click();
+}
+
+function pickFromPhotos() {
+  // Exact same picker — on iOS this triggers the Files sheet
+  const p = document.getElementById('file-picker');
+  p.removeAttribute('webkitdirectory');
+  p.value = '';
+  p.click();
+}
+
+function pickFolder() {
+  const p = document.getElementById('folder-picker');
+  p.value = '';
+  p.click();
+}
+
+// Shared AudioContext — create once, reuse
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx || audioCtx.state === 'closed') {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  // iOS suspends the context until a user gesture resumes it
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// audioLibrary entry: { buffer: AudioBuffer, name, size }
+// We decode every file via Web Audio API — far more reliable on iOS than HTMLAudioElement + blob URL
+let audioLibrary = {};
+let nowPlayingId = null;
+let nowPlayingSource = null; // AudioBufferSourceNode
+let nowPlayingStartedAt = 0; // audioCtx.currentTime when play began
+let nowPlayingOffset = 0;    // where in the buffer we started
+let progressTimer = null;
+
+function handleFiles(files) {
+  if (!files || files.length === 0) return;
+  const AUDIO_EXTS = /\.(mp3|wav|aif|aiff|m4a|ogg|flac|aac|opus|wma|caf)$/i;
+  let pending = 0;
+
+  for (const file of files) {
+    if (!AUDIO_EXTS.test(file.name)) continue;
+    pending++;
+    const key = file.name.toLowerCase();
+    const name = file.name;
+    const size = file.size;
+
+    // Read the full file bytes — this ensures we have the complete data
+    // regardless of whether it came from iCloud Drive, Google Drive, etc.
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const arrayBuffer = e.target.result;
+      // Decode via Web Audio API — works on iOS for mp3/m4a/wav/aac
+      getAudioCtx().decodeAudioData(
+        arrayBuffer,
+        (buffer) => {
+          audioLibrary[key] = { buffer, name, size };
+          pending--;
+          if (pending === 0) onAllLoaded();
+        },
+        (err) => {
+          console.warn('decodeAudioData failed for', name, err);
+          pending--;
+          if (pending === 0) onAllLoaded();
+        }
+      );
+    };
+    reader.onerror = () => { pending--; if (pending === 0) onAllLoaded(); };
+    reader.readAsArrayBuffer(file);
+  }
+
+  document.getElementById('file-picker').value = '';
+  document.getElementById('folder-picker').value = '';
+
+  if (pending === 0) onAllLoaded();
+}
+
+function onAllLoaded() {
+  updateLibraryPanel();
+  updateLibraryButton();
+  renderCues();
+  buildStats();
+  closePanel();
+}
+
+function findAudio(filename) {
+  if (!filename || filename === '$null') return null;
+  return audioLibrary[filename.toLowerCase()] || null;
+}
+
+function removeFromLibrary(key) {
+  if (nowPlayingId) {
+    const entry = findAudioByCueId(nowPlayingId);
+    if (entry && audioLibrary[key] === entry) stopAudio();
+  }
+  delete audioLibrary[key];
+  updateLibraryPanel();
+  updateLibraryButton();
+  renderCues();
+}
+
+function clearLibrary() {
+  stopAudio();
+  audioLibrary = {};
+  updateLibraryPanel();
+  updateLibraryButton();
+  renderCues();
+}
+
+function updateLibraryButton() {
+  const count = Object.keys(audioLibrary).length;
+  const btn = document.getElementById('audio-lib-btn');
+  const icon = document.getElementById('lib-btn-icon');
+  const label = document.getElementById('lib-btn-label');
+  if (count > 0) {
+    btn.classList.add('has-files');
+    icon.textContent = '🎵';
+    label.textContent = `${count} file${count !== 1 ? 's' : ''}`;
+  } else {
+    btn.classList.remove('has-files');
+    icon.textContent = '🎵';
+    label.textContent = 'Audio Library';
+  }
+}
+
+function updateLibraryPanel() {
+  const keys = Object.keys(audioLibrary);
+  const listEl = document.getElementById('library-list');
+  const summaryEl = document.getElementById('library-summary');
+  const summaryText = document.getElementById('lib-summary-text');
+
+  if (keys.length === 0) {
+    listEl.innerHTML = `<div class="empty-state" style="padding:20px"><div class="empty-icon" style="font-size:32px">📭</div><div class="empty-text" style="font-size:12px">No files imported yet</div></div>`;
+    summaryEl.style.display = 'none';
+    return;
+  }
+
+  // Find which filenames in the current show match
+  const allCueFilenames = new Set(
+    DATA.files.flatMap(f => f.cues.map(c => (c.filename || '').toLowerCase()))
+  );
+
+  const matched = keys.filter(k => allCueFilenames.has(k));
+  const unmatched = keys.filter(k => !allCueFilenames.has(k));
+
+  let html = '';
+  if (matched.length > 0) {
+    html += `<div class="library-section-label">✅ Matched to cues (${matched.length})</div>`;
+    html += matched.map(k => {
+      const f = audioLibrary[k];
+      const sz = f.size ? (f.size / 1024 / 1024).toFixed(1) + 'MB' : '';
+      return `<div class="library-item">
+        <div class="lib-item-dot lib-matched"></div>
+        <div class="lib-item-name">${escHtml(f.name)}</div>
+        <div class="lib-item-size">${sz}</div>
+        <button class="lib-remove" onclick="removeFromLibrary('${escHtml(k)}')">✕</button>
+      </div>`;
+    }).join('');
+  }
+  if (unmatched.length > 0) {
+    html += `<div class="library-section-label" style="margin-top:8px">⚠️ No cue match (${unmatched.length})</div>`;
+    html += unmatched.map(k => {
+      const f = audioLibrary[k];
+      const sz = f.size ? (f.size / 1024 / 1024).toFixed(1) + 'MB' : '';
+      return `<div class="library-item">
+        <div class="lib-item-dot lib-unmatched"></div>
+        <div class="lib-item-name">${escHtml(f.name)}</div>
+        <div class="lib-item-size">${sz}</div>
+        <button class="lib-remove" onclick="removeFromLibrary('${escHtml(k)}')">✕</button>
+      </div>`;
+    }).join('');
+  }
+
+  listEl.innerHTML = html;
+  summaryEl.style.display = 'flex';
+  summaryText.innerHTML = `<strong>${matched.length}</strong> of ${keys.length} files matched`;
+}
+
+function openPanel() {
+  updateLibraryPanel();
+  document.getElementById('panel-overlay').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('panel-overlay').classList.remove('open');
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('panel-overlay')) closePanel();
+}
+
+// ─────────────────────────────────────────────
+// AUDIO PLAYBACK  (Web Audio API)
+// ─────────────────────────────────────────────
+function playAudio(cueId) {
+  const entry = findAudioByCueId(cueId);
+  if (!entry || !entry.buffer) return;
+
+  const ctx = getAudioCtx();
+
+  // Toggle off if already playing this cue
+  if (nowPlayingId === cueId && nowPlayingSource) {
+    nowPlayingSource.stop();
+    nowPlayingSource = null;
+    nowPlayingId = null;
+    clearInterval(progressTimer);
+    progressTimer = null;
+    refreshPlayState(cueId, false);
+    updateProgress(cueId, 0, entry.buffer.duration);
+    nowPlayingOffset = 0;
+    return;
+  }
+
+  // Stop whatever is currently playing
+  if (nowPlayingSource) {
+    try { nowPlayingSource.stop(); } catch(e) {}
+    nowPlayingSource = null;
+    if (nowPlayingId) refreshPlayState(nowPlayingId, false);
+    clearInterval(progressTimer);
+    progressTimer = null;
+  }
+
+  // Create a new source node from the decoded buffer
+  const source = ctx.createBufferSource();
+  source.buffer = entry.buffer;
+  source.connect(ctx.destination);
+
+  const offset = nowPlayingId === cueId ? nowPlayingOffset : 0;
+  source.start(0, offset);
+
+  nowPlayingSource = source;
+  nowPlayingId = cueId;
+  nowPlayingStartedAt = ctx.currentTime - offset;
+  nowPlayingOffset = offset;
+
+  refreshPlayState(cueId, true);
+
+  // Progress ticker
+  const duration = entry.buffer.duration;
+  progressTimer = setInterval(() => {
+    if (!nowPlayingSource) return;
+    const elapsed = ctx.currentTime - nowPlayingStartedAt;
+    updateProgress(cueId, Math.min(elapsed, duration), duration);
+  }, 100);
+
+  source.onended = () => {
+    if (nowPlayingId !== cueId) return; // was stopped by something else
+    nowPlayingSource = null;
+    nowPlayingId = null;
+    nowPlayingOffset = 0;
+    clearInterval(progressTimer);
+    progressTimer = null;
+    refreshPlayState(cueId, false);
+    updateProgress(cueId, 0, duration);
+  };
+}
+
+function stopAudio() {
+  if (nowPlayingSource) {
+    try { nowPlayingSource.stop(); } catch(e) {}
+    nowPlayingSource = null;
+  }
+  clearInterval(progressTimer);
+  progressTimer = null;
+  if (nowPlayingId) {
+    refreshPlayState(nowPlayingId, false);
+    nowPlayingId = null;
+  }
+  nowPlayingOffset = 0;
+}
+
+function seekAudio(cueId, e) {
+  const entry = findAudioByCueId(cueId);
+  if (!entry || !entry.buffer) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  const seekTo = pct * entry.buffer.duration;
+  e.stopPropagation();
+
+  if (nowPlayingId === cueId) {
+    // Restart from new position
+    nowPlayingOffset = seekTo;
+    if (nowPlayingSource) {
+      try { nowPlayingSource.stop(); } catch(e2) {}
+      nowPlayingSource = null;
+    }
+    clearInterval(progressTimer);
+    // Re-trigger play from new offset
+    playAudio(cueId);
+  } else {
+    // Just update the display without playing
+    updateProgress(cueId, seekTo, entry.buffer.duration);
+  }
+}
+
+function findAudioByCueId(cueId) {
+  for (const file of DATA.files) {
+    for (const cue of file.cues) {
+      if (cue.id === cueId) return findAudio(cue.filename);
+    }
+  }
+  return null;
+}
+
+function refreshPlayState(cueId, playing) {
+  const btn = document.getElementById('playbtn-' + cueId);
+  if (btn) btn.textContent = playing ? '⏸' : '▶';
+  const dot = document.getElementById('dot-' + cueId);
+  if (dot) {
+    dot.classList.toggle('playing', playing);
+    dot.classList.toggle('linked', !playing && !!findAudioByCueId(cueId));
+  }
+  const card = document.getElementById('card-' + cueId);
+  if (card) card.classList.toggle('playing', playing);
+}
+
+function updateProgress(cueId, current, duration) {
+  const fill = document.getElementById('prog-' + cueId);
+  const elapsed = document.getElementById('elapsed-' + cueId);
+  if (fill && duration > 0) fill.style.width = ((current / duration) * 100) + '%';
+  if (elapsed) elapsed.textContent = fmtDuration(current);
+}
+
+function fmtDuration(secs) {
+  if (!secs || secs <= 0) return '—';
+  const m = Math.floor(secs / 60);
+  const s = (secs % 60).toFixed(1).padStart(4, '0');
+  return m > 0 ? `${m}:${s}` : `${secs.toFixed(1)}s`;
+}
+
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function colorClass(c) {
+  const map = { red:'cc-red', green:'cc-green', orange:'cc-orange', purple:'cc-purple', blue:'cc-blue', none:'cc-none' };
+  return map[c] || 'cc-none';
+}
+
+function continueModeLabel(m) {
+  if (m === 2) return '<span class="continue-mode-2">Auto-Follow ▶▶</span>';
+  if (m === 1) return '<span style="color:var(--accent2)">Continue ▶</span>';
+  return '<span class="continue-mode-0">Manual Stop</span>';
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function getAllCues() { return DATA.files[activeFile].cues; }
+
+function getFilteredCues() {
+  let cues = getAllCues();
+  if (activeColorFilter !== 'all') cues = cues.filter(c => c.color === activeColorFilter);
+  if (notesFilterOn) cues = cues.filter(c => c.notes && c.notes.trim());
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    cues = cues.filter(c =>
+      c.number.includes(q) || c.name.toLowerCase().includes(q) ||
+      c.filename.toLowerCase().includes(q) || c.notes.toLowerCase().includes(q)
+    );
+  }
+  return cues;
+}
+
+// ─────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────
+function buildShowTabs() {
+  const el = document.getElementById('show-tabs');
+  if (DATA.files.length === 1) {
+    el.innerHTML = `<div class="show-tab active" style="cursor:default;flex:1">
+      <span class="show-tab-label">Loaded show</span>${DATA.files[0].workspaceName}
+    </div>`;
+  } else {
+    el.innerHTML = DATA.files.map((f, i) =>
+      `<button class="show-tab ${i === activeFile ? 'active' : ''}" onclick="selectFile(${i})">
+        <span class="show-tab-label">Show ${i+1}</span>${f.workspaceName}
+      </button>`
+    ).join('');
+  }
+}
+
+function buildColorFilters() {
+  const cues = getAllCues();
+  const colors = [...new Set(cues.map(c => c.color))];
+  const order = ['all','red','orange','green','purple','blue','none'];
+  const available = order.filter(c => c === 'all' || colors.includes(c));
+  document.getElementById('color-filters').innerHTML = available.map(c =>
+    `<button class="color-chip ${c === activeColorFilter ? 'sel' : ''}" data-c="${c}" onclick="selectColor('${c}')">
+      ${c === 'all' ? 'All' : c.charAt(0).toUpperCase() + c.slice(1)}
+    </button>`
+  ).join('');
+}
+
+function buildStats() {
+  const filtered = getFilteredCues();
+  const all = getAllCues();
+  const totalDur = filtered.reduce((s, c) => s + c.duration, 0);
+  const withNotes = all.filter(c => c.notes && c.notes.trim()).length;
+  const linked = all.filter(c => findAudio(c.filename)).length;
+  document.getElementById('stats-bar').innerHTML = `
+    <div class="stat"><span class="stat-num">${filtered.length}</span><span class="stat-label">Cues</span></div>
+    <div class="stat"><span class="stat-num">${fmtDuration(totalDur)}</span><span class="stat-label">Runtime</span></div>
+    <div class="stat"><span class="stat-num">${withNotes}</span><span class="stat-label">w/ Notes</span></div>
+    <div class="stat"><span class="stat-num" style="color:${linked > 0 ? 'var(--green)' : 'var(--accent)'}">${linked}</span><span class="stat-label">Audio</span></div>
+  `;
+}
+
+function renderCues() {
+  const filtered = getFilteredCues();
+  const el = document.getElementById('cue-list');
+
+  if (filtered.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">No cues match</div></div>`;
+    return;
+  }
+
+  el.innerHTML = filtered.map((cue, i) => {
+    const isExpanded = expandedId === cue.id;
+    const isCurrent = i === currentCueIdx;
+    const isPlayingNow = nowPlayingId === cue.id;
+    const displayName = cue.name || cue.filename.replace('.mp3','').replace('.wav','').replace('.aif','') || `Cue ${cue.number}`;
+    const isEmpty = !cue.name;
+    const hasNotes = cue.notes && cue.notes.trim();
+    const audioEntry = findAudio(cue.filename);
+
+    let flags = '';
+    if (cue.continueMode === 2) flags += '<span class="flag-dot flag-follow"></span>';
+    if (!cue.armed) flags += '<span class="flag-dot flag-armed-off"></span>';
+
+    // Audio status dot in cue row
+    const dotClass = isPlayingNow ? 'playing' : audioEntry ? 'linked' : '';
+    const audioDot = cue.type === 'Audio' && cue.filename && cue.filename !== '$null'
+      ? `<div class="audio-status-dot ${dotClass}" id="dot-${cue.id}"></div>`
+      : '';
+
+    let detailHtml = '';
+    if (isExpanded) {
+      // Build player or link prompt
+      let playerHtml = '';
+      if (cue.type === 'Audio' && cue.filename && cue.filename !== '$null') {
+        if (audioEntry) {
+          playerHtml = `
+            <div class="cue-player">
+              <div class="player-filename">🎵 ${escHtml(audioEntry.name)}</div>
+              <div class="player-controls">
+                <button class="play-pause-btn" id="playbtn-${cue.id}"
+                  onclick="event.stopPropagation(); playAudio('${cue.id}')"
+                >${nowPlayingId === cue.id ? '⏸' : '▶'}</button>
+                <div class="player-progress-wrap">
+                  <div class="progress-bar-track" onclick="event.stopPropagation(); seekAudio('${cue.id}', event)">
+                    <div class="progress-bar-fill" id="prog-${cue.id}"></div>
+                  </div>
+                  <div class="player-times">
+                    <span id="elapsed-${cue.id}">0.0s</span>
+                    <span>${fmtDuration(cue.duration)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+        } else {
+          playerHtml = `
+            <div class="player-not-linked">
+              <div class="not-linked-msg">No audio loaded for <strong>${escHtml(cue.filename)}</strong></div>
+              <button class="link-audio-btn" onclick="event.stopPropagation(); openPanel()">+ Import</button>
+            </div>`;
+        }
+      }
+
+      detailHtml = `
+        <div class="cue-detail">
+          ${playerHtml}
+          <div class="detail-grid">
+            <div class="detail-item"><div class="detail-label">Duration</div><div class="detail-value">${fmtDuration(cue.duration)}</div></div>
+            <div class="detail-item"><div class="detail-label">Continue</div><div class="detail-value">${continueModeLabel(cue.continueMode)}</div></div>
+            ${cue.preWait > 0 ? `<div class="detail-item"><div class="detail-label">Pre-wait</div><div class="detail-value">${cue.preWait}s</div></div>` : ''}
+            ${cue.postWait > 0 ? `<div class="detail-item"><div class="detail-label">Post-wait</div><div class="detail-value">${cue.postWait}s</div></div>` : ''}
+            <div class="detail-item"><div class="detail-label">Type</div><div class="detail-value">${cue.type}</div></div>
+            <div class="detail-item"><div class="detail-label">Armed</div><div class="detail-value" style="color:${cue.armed ? 'var(--green)':'var(--red)'}">${cue.armed ? 'Yes':'No'}</div></div>
+          </div>
+          ${hasNotes ? `<div class="notes-section"><div class="notes-header">📋 Operator Notes</div><div class="notes-text">${escHtml(cue.notes)}</div></div>` : ''}
+          ${cue.cues && cue.cues.length > 0 ? `
+            <div class="sub-cues-section" style="margin-top:8px">
+              <div class="detail-label" style="margin-bottom:4px">Sub-cues (${cue.cues.length})</div>
+              ${cue.cues.map(sc => `<div class="sub-cue-row">${sc.type} · ${sc.filename || 'unnamed'} · ${fmtDuration(sc.duration)}</div>`).join('')}
+            </div>` : ''}
+        </div>`;
+    }
+
+    return `
+      <div class="cue-card ${isExpanded ? 'expanded':''} ${isCurrent ? 'current':''} ${isPlayingNow ? 'playing':''}"
+           id="card-${cue.id || i}" onclick="toggleExpand('${cue.id}', ${i})">
+        <div class="cue-main">
+          <div class="cue-color-bar ${colorClass(cue.color)}"></div>
+          <div class="cue-number">#${cue.number}</div>
+          <div class="cue-info">
+            <div class="cue-name ${isEmpty ? 'empty':''}">${escHtml(displayName)}</div>
+            ${cue.filename && cue.filename !== '$null' ? `<div class="cue-filename">${escHtml(cue.filename)}</div>` : ''}
+          </div>
+          <div class="cue-meta">
+            ${audioDot}
+            ${flags ? `<div class="cue-flags">${flags}</div>` : ''}
+            ${hasNotes ? '<span style="font-size:11px">📋</span>' : ''}
+            ${cue.duration > 0 ? `<div class="cue-duration">${fmtDuration(cue.duration)}</div>` : ''}
+            <div class="cue-type-badge type-${cue.type}">${cue.type}</div>
+            <div class="chevron">›</div>
+          </div>
+        </div>
+        ${detailHtml}
+      </div>`;
+  }).join('');
+
+  updateBottomBar(filtered);
+}
+
+// ─────────────────────────────────────────────
+// INTERACTIONS
+// ─────────────────────────────────────────────
+function toggleExpand(id, idx) {
+  expandedId = expandedId === id ? null : id;
+  currentCueIdx = idx;
+  renderCues();
+}
+
+function updateBottomBar(filtered) {
+  const cue = filtered[currentCueIdx];
+  document.getElementById('current-num').textContent = cue ? `#${cue.number}` : '—';
+  document.getElementById('current-of').textContent = cue ? `${currentCueIdx+1} / ${filtered.length}` : 'CUE';
+}
+
+function moveCurrent(delta) {
+  const filtered = getFilteredCues();
+  currentCueIdx = Math.max(0, Math.min(filtered.length - 1, currentCueIdx + delta));
+  expandedId = null;
+  renderCues();
+  const el = document.querySelector('.cue-card.current');
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function goNext() {
+  const filtered = getFilteredCues();
+  const cue = filtered[currentCueIdx];
+  if (cue) {
+    expandedId = cue.id;
+    renderCues();
+    document.querySelector('.cue-card.current')?.scrollIntoView({ behavior:'smooth', block:'center' });
+    setTimeout(() => moveCurrent(1), 300);
+  }
+}
+
+function selectFile(idx) {
+  stopAudio();
+  activeFile = idx;
+  activeColorFilter = 'all';
+  currentCueIdx = 0;
+  expandedId = null;
+  buildShowTabs();
+  buildColorFilters();
+  buildStats();
+  renderCues();
+}
+
+function selectColor(c) {
+  activeColorFilter = c;
+  currentCueIdx = 0;
+  expandedId = null;
+  buildColorFilters();
+  buildStats();
+  renderCues();
+}
+
+function toggleNotesFilter() {
+  notesFilterOn = !notesFilterOn;
+  document.getElementById('notes-filter-btn').classList.toggle('active', notesFilterOn);
+  currentCueIdx = 0;
+  expandedId = null;
+  buildStats();
+  renderCues();
+}
+
+document.getElementById('search').addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  currentCueIdx = 0;
+  expandedId = null;
+  buildStats();
+  renderCues();
+});
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+buildShowTabs();
+buildColorFilters();
+buildStats();
+renderCues();
+</script>
+</body>
+</html>
