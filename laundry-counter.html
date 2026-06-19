@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CueMaster · Laundry Counter</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --border: #2a2a3d;
+    --text: #e8e8f0;
+    --muted: #6b6b85;
+    --accent: #f0c040;
+    --accent2: #40b0f0;
+    --red: #ff4060;
+    --green: #30e090;
+    --orange: #ff8830;
+    --purple: #b060ff;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    height: 100%;
+    overscroll-behavior: none;
+  }
+
+  #app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 12px;
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  header .subtitle {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 0 100px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+
+  .meta-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .meta-row.three-col {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  input[type="text"], input[type="date"], input[type="number"], input[type="email"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus {
+    border-color: var(--accent);
+  }
+
+  input[type="number"] {
+    text-align: center;
+    padding: 8px 4px;
+    font-size: 16px;
+    font-weight: 600;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .photo-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .photo-preview {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    display: none;
+  }
+
+  .photo-buttons {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+  }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-danger {
+    background: var(--red);
+    color: #fff;
+  }
+
+  .btn-success {
+    background: var(--green);
+    color: #000;
+  }
+
+  .btn-accent2 {
+    background: var(--accent2);
+    color: #000;
+  }
+
+  .btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .btn-small {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 6px;
+    flex: 0;
+  }
+
+  .grid-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+
+  .laundry-grid {
+    width: 100%;
+    min-width: 580px;
+    border-collapse: collapse;
+  }
+
+  .laundry-grid th {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 4px;
+    text-align: center;
+    border-bottom: 2px solid var(--accent);
+    white-space: nowrap;
+  }
+
+  .laundry-grid th:first-child {
+    text-align: left;
+    min-width: 120px;
+  }
+
+  .laundry-grid td {
+    padding: 3px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .laundry-grid td:first-child {
+    text-align: left;
+    padding-left: 0;
+  }
+
+  .laundry-grid td input[type="text"] {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .laundry-grid td input[type="number"] {
+    font-size: 14px;
+    width: 52px;
+    padding: 8px 2px;
+  }
+
+  .laundry-grid .extras-input {
+    width: 100%;
+    min-width: 80px;
+    font-size: 12px;
+    text-align: left;
+    padding: 8px;
+  }
+
+  .laundry-grid tr.total-row td {
+    border-top: 2px solid var(--accent);
+    border-bottom: none;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--accent);
+    padding: 10px 4px;
+  }
+
+  .laundry-grid tr.total-row td:first-child {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+
+  .row-total {
+    font-weight: 700;
+    color: var(--accent2);
+    font-size: 14px;
+  }
+
+  .grand-total {
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    padding: 16px;
+    background: var(--surface2);
+    border-radius: 10px;
+    margin-top: 12px;
+  }
+
+  .grand-total span {
+    display: block;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    margin-bottom: 4px;
+  }
+
+  .row-actions {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+  }
+
+  .btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    flex: 0;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-icon:hover { color: var(--red); border-color: var(--red); }
+  .btn-icon svg { width: 14px; height: 14px; }
+
+  .action-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px;
+    padding-bottom: calc(12px + var(--safe-bottom));
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    z-index: 100;
+  }
+
+  .action-bar .btn { flex: 1; max-width: 220px; }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+
+  .empty-state svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+    opacity: 0.4;
+  }
+
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: var(--green);
+    color: #000;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    z-index: 200;
+    transition: transform 0.3s ease;
+    pointer-events: none;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .saved-lists {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .saved-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .saved-item:hover { border-color: var(--accent); }
+
+  .saved-item .info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .saved-item .show-name {
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .saved-item .date {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .saved-item .count {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .saved-actions {
+    display: flex;
+    gap: 4px;
+  }
+
+  @media (max-width: 480px) {
+    .meta-row { grid-template-columns: 1fr; }
+    .meta-row.three-col { grid-template-columns: 1fr 1fr; }
+    .photo-buttons { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header>
+    <div>
+      <h1>LAUNDRY</h1>
+      <div class="subtitle">Wardrobe Counter</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-secondary btn-small" onclick="showHistory()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+        History
+      </button>
+    </div>
+  </header>
+
+  <div class="main-content" id="mainContent">
+
+    <!-- SHOW INFO -->
+    <div class="section">
+      <div class="section-title">Show Info</div>
+      <div class="meta-row">
+        <div>
+          <label>Date</label>
+          <input type="date" id="listDate">
+        </div>
+        <div>
+          <label>Show / Event</label>
+          <input type="text" id="showName" placeholder="e.g. SB Meryal Peak">
+        </div>
+      </div>
+      <div class="meta-row">
+        <div>
+          <label>Wardrobe Dept.</label>
+          <input type="text" id="wardrobeDept" placeholder="Head of Wardrobe">
+        </div>
+        <div>
+          <label>Email (for PDF)</label>
+          <input type="email" id="emailTo" placeholder="wardrobe@show.com">
+        </div>
+      </div>
+    </div>
+
+    <!-- PHOTO REFERENCE -->
+    <div class="section">
+      <div class="section-title">Photo Reference</div>
+      <div class="photo-area">
+        <img id="photoPreview" class="photo-preview" alt="Laundry list photo">
+        <div class="photo-buttons">
+          <button class="btn btn-primary" onclick="capturePhoto()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Snap Photo
+          </button>
+          <button class="btn btn-secondary" onclick="uploadPhoto()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Upload
+          </button>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(event)">
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" onchange="handleFile(event)">
+      </div>
+    </div>
+
+    <!-- LAUNDRY GRID -->
+    <div class="section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="section-title" style="margin-bottom:0">Laundry Count</div>
+        <button class="btn btn-secondary btn-small" onclick="addRow()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Row
+        </button>
+      </div>
+      <div class="grid-wrapper">
+        <table class="laundry-grid" id="laundryGrid">
+          <thead>
+            <tr>
+              <th>Character / Mascot</th>
+              <th>Shirts<br>Tops</th>
+              <th>Pants<br>Legs</th>
+              <th>Towels</th>
+              <th>Socks<br>Pairs</th>
+              <th>Caps</th>
+              <th>Extras</th>
+              <th>Row<br>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="gridBody"></tbody>
+          <tfoot>
+            <tr class="total-row" id="totalRow">
+              <td>TOTAL</td>
+              <td id="totalShirts">0</td>
+              <td id="totalPants">0</td>
+              <td id="totalTowels">0</td>
+              <td id="totalSocks">0</td>
+              <td id="totalCaps">0</td>
+              <td></td>
+              <td id="totalAll">0</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="grand-total">
+        <span>TOTAL ITEMS</span>
+        <div id="grandTotal">0</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ACTION BAR -->
+  <div class="action-bar">
+    <button class="btn btn-success" onclick="exportPDF()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Export PDF
+    </button>
+    <button class="btn btn-primary" onclick="saveList()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save
+    </button>
+  </div>
+
+</div>
+
+<!-- HISTORY MODAL -->
+<div id="historyModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:300;overflow-y:auto;">
+  <div style="max-width:600px;margin:0 auto;padding:20px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h2 style="font-family:'Space Mono',monospace;color:var(--accent);font-size:16px;">SAVED LISTS</h2>
+      <button class="btn btn-secondary btn-small" onclick="closeHistory()">Close</button>
+    </div>
+    <div id="historyContent" class="saved-lists"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const CATEGORIES = ['shirts','pants','towels','socks','caps'];
+const DEFAULT_CHARACTERS = [
+  'Wardrobe','SpongeBob','Perch','Anchovy Girl','Patrick',
+  'Octavius','Squidward','Anch. Boy','MG'
+];
+
+let rows = [];
+let photoData = null;
+let currentListId = null;
+
+function init() {
+  document.getElementById('listDate').value = new Date().toISOString().split('T')[0];
+  DEFAULT_CHARACTERS.forEach(name => addRow(name));
+  loadLastSession();
+}
+
+function addRow(name) {
+  const id = Date.now() + Math.random();
+  rows.push({ id, name: name || '' });
+  renderGrid();
+  if (!name) {
+    setTimeout(() => {
+      const inputs = document.querySelectorAll('.char-name');
+      const last = inputs[inputs.length - 1];
+      if (last) last.focus();
+    }, 50);
+  }
+}
+
+function removeRow(id) {
+  rows = rows.filter(r => r.id !== id);
+  renderGrid();
+}
+
+function renderGrid() {
+  const tbody = document.getElementById('gridBody');
+  tbody.innerHTML = rows.map((row, idx) => `
+    <tr data-id="${row.id}">
+      <td><input type="text" class="char-name" value="${esc(row.name)}" placeholder="Character name" data-idx="${idx}" onchange="rows[${idx}].name=this.value"></td>
+      ${CATEGORIES.map(cat => `<td><input type="number" min="0" value="${row[cat]||0}" data-cat="${cat}" data-idx="${idx}" onchange="updateVal(${idx},'${cat}',this.value)" onfocus="this.select()"></td>`).join('')}
+      <td><input type="text" class="extras-input" value="${esc(row.extras||'')}" placeholder="e.g. Bra 2" data-idx="${idx}" onchange="rows[${idx}].extras=this.value"></td>
+      <td class="row-total" id="rowTotal${idx}">0</td>
+      <td>
+        <button class="btn-icon" onclick="removeRow(${row.id})" title="Remove">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </td>
+    </tr>
+  `).join('');
+  recalcTotals();
+}
+
+function esc(s) {
+  return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+}
+
+function updateVal(idx, cat, val) {
+  rows[idx][cat] = parseInt(val) || 0;
+  recalcTotals();
+}
+
+function recalcTotals() {
+  const colTotals = {};
+  CATEGORIES.forEach(c => colTotals[c] = 0);
+  let grand = 0;
+
+  rows.forEach((row, idx) => {
+    let rowSum = 0;
+    CATEGORIES.forEach(cat => {
+      const v = parseInt(row[cat]) || 0;
+      rowSum += v;
+      colTotals[cat] += v;
+    });
+    const extrasCount = parseExtrasCount(row.extras);
+    rowSum += extrasCount;
+    grand += rowSum;
+    const el = document.getElementById('rowTotal' + idx);
+    if (el) el.textContent = rowSum;
+  });
+
+  CATEGORIES.forEach(cat => {
+    document.getElementById('total' + cat.charAt(0).toUpperCase() + cat.slice(1)).textContent = colTotals[cat];
+  });
+
+  grand = Object.values(colTotals).reduce((a, b) => a + b, 0) + rows.reduce((s, r) => s + parseExtrasCount(r.extras), 0);
+  document.getElementById('totalAll').textContent = grand;
+  document.getElementById('grandTotal').textContent = grand;
+}
+
+function parseExtrasCount(str) {
+  if (!str) return 0;
+  let total = 0;
+  const matches = str.match(/\d+/g);
+  if (matches) matches.forEach(m => total += parseInt(m));
+  return total;
+}
+
+function capturePhoto() {
+  document.getElementById('cameraInput').click();
+}
+
+function uploadPhoto() {
+  document.getElementById('fileInput').click();
+}
+
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    photoData = ev.target.result;
+    const preview = document.getElementById('photoPreview');
+    preview.src = photoData;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+}
+
+function getFormData() {
+  return {
+    date: document.getElementById('listDate').value,
+    show: document.getElementById('showName').value,
+    dept: document.getElementById('wardrobeDept').value,
+    email: document.getElementById('emailTo').value,
+    rows: rows.map(r => ({...r})),
+    photo: photoData,
+    savedAt: new Date().toISOString()
+  };
+}
+
+function saveList() {
+  const data = getFormData();
+  const lists = JSON.parse(localStorage.getItem('laundryLists') || '[]');
+
+  if (currentListId) {
+    const idx = lists.findIndex(l => l.id === currentListId);
+    if (idx >= 0) {
+      data.id = currentListId;
+      lists[idx] = data;
+    } else {
+      data.id = Date.now();
+      currentListId = data.id;
+      lists.unshift(data);
+    }
+  } else {
+    data.id = Date.now();
+    currentListId = data.id;
+    lists.unshift(data);
+  }
+
+  localStorage.setItem('laundryLists', JSON.stringify(lists));
+  toast('List saved!');
+}
+
+function loadLastSession() {
+  const lists = JSON.parse(localStorage.getItem('laundryLists') || '[]');
+  if (lists.length > 0) {
+    const last = lists[0];
+    if (isToday(last.date)) {
+      loadList(last);
+    }
+  }
+}
+
+function isToday(dateStr) {
+  return dateStr === new Date().toISOString().split('T')[0];
+}
+
+function loadList(data) {
+  currentListId = data.id;
+  document.getElementById('listDate').value = data.date || '';
+  document.getElementById('showName').value = data.show || '';
+  document.getElementById('wardrobeDept').value = data.dept || '';
+  document.getElementById('emailTo').value = data.email || '';
+  rows = data.rows || [];
+  if (data.photo) {
+    photoData = data.photo;
+    const preview = document.getElementById('photoPreview');
+    preview.src = photoData;
+    preview.style.display = 'block';
+  }
+  renderGrid();
+}
+
+function showHistory() {
+  const lists = JSON.parse(localStorage.getItem('laundryLists') || '[]');
+  const el = document.getElementById('historyContent');
+
+  if (lists.length === 0) {
+    el.innerHTML = '<div class="empty-state"><p>No saved lists yet.</p></div>';
+  } else {
+    el.innerHTML = lists.map(l => {
+      const total = (l.rows || []).reduce((s, r) => {
+        return s + CATEGORIES.reduce((a, c) => a + (parseInt(r[c]) || 0), 0) + parseExtrasCount(r.extras);
+      }, 0);
+      return `
+        <div class="saved-item" onclick="loadFromHistory('${l.id}')">
+          <div class="info">
+            <div class="show-name">${esc(l.show || 'Untitled')}</div>
+            <div class="date">${l.date || 'No date'} · ${(l.rows||[]).length} characters</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div class="count">${total}</div>
+            <div class="saved-actions">
+              <button class="btn-icon" onclick="event.stopPropagation();deleteList('${l.id}')" title="Delete">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  document.getElementById('historyModal').style.display = 'block';
+}
+
+function closeHistory() {
+  document.getElementById('historyModal').style.display = 'none';
+}
+
+function loadFromHistory(id) {
+  const lists = JSON.parse(localStorage.getItem('laundryLists') || '[]');
+  const item = lists.find(l => String(l.id) === String(id));
+  if (item) {
+    loadList(item);
+    closeHistory();
+    toast('List loaded');
+  }
+}
+
+function deleteList(id) {
+  if (!confirm('Delete this list?')) return;
+  let lists = JSON.parse(localStorage.getItem('laundryLists') || '[]');
+  lists = lists.filter(l => String(l.id) !== String(id));
+  localStorage.setItem('laundryLists', JSON.stringify(lists));
+  if (String(currentListId) === String(id)) currentListId = null;
+  showHistory();
+  toast('Deleted');
+}
+
+function exportPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('p', 'mm', 'a4');
+  const pageW = doc.internal.pageSize.getWidth();
+  const date = document.getElementById('listDate').value;
+  const show = document.getElementById('showName').value || 'Untitled';
+  const dept = document.getElementById('wardrobeDept').value;
+  const email = document.getElementById('emailTo').value;
+
+  doc.setFillColor(10, 10, 15);
+  doc.rect(0, 0, pageW, 297, 'F');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(22);
+  doc.setTextColor(240, 192, 64);
+  doc.text('LAUNDRY COUNT', pageW / 2, 20, { align: 'center' });
+
+  doc.setFontSize(10);
+  doc.setTextColor(180, 180, 200);
+  doc.text(`Show: ${show}`, 14, 32);
+  doc.text(`Date: ${date}`, 14, 38);
+  if (dept) doc.text(`Wardrobe: ${dept}`, 14, 44);
+  if (email) doc.text(`Email: ${email}`, pageW - 14, 32, { align: 'right' });
+
+  let startY = dept ? 52 : 48;
+
+  const headers = [['Character', 'Shirts/Tops', 'Pants/Legs', 'Towels', 'Socks (Pr)', 'Caps', 'Extras', 'Total']];
+  const body = rows.map(r => {
+    const rowSum = CATEGORIES.reduce((s, c) => s + (parseInt(r[c]) || 0), 0) + parseExtrasCount(r.extras);
+    return [
+      r.name || '',
+      r.shirts || 0,
+      r.pants || 0,
+      r.towels || 0,
+      r.socks || 0,
+      r.caps || 0,
+      r.extras || '',
+      rowSum
+    ];
+  });
+
+  const colTotals = {};
+  CATEGORIES.forEach(c => colTotals[c] = 0);
+  let grandTotal = 0;
+  rows.forEach(r => {
+    CATEGORIES.forEach(c => colTotals[c] += parseInt(r[c]) || 0);
+    grandTotal += CATEGORIES.reduce((s, c) => s + (parseInt(r[c]) || 0), 0) + parseExtrasCount(r.extras);
+  });
+
+  body.push([
+    'TOTAL',
+    colTotals.shirts,
+    colTotals.pants,
+    colTotals.towels,
+    colTotals.socks,
+    colTotals.caps,
+    '',
+    grandTotal
+  ]);
+
+  doc.autoTable({
+    head: headers,
+    body: body,
+    startY: startY,
+    theme: 'grid',
+    styles: {
+      fillColor: [19, 19, 26],
+      textColor: [232, 232, 240],
+      lineColor: [42, 42, 61],
+      lineWidth: 0.3,
+      fontSize: 9,
+      cellPadding: 3,
+      halign: 'center'
+    },
+    headStyles: {
+      fillColor: [28, 28, 40],
+      textColor: [240, 192, 64],
+      fontStyle: 'bold',
+      fontSize: 8
+    },
+    columnStyles: {
+      0: { halign: 'left', cellWidth: 35 },
+      6: { halign: 'left', cellWidth: 30 },
+    },
+    didParseCell: function(data) {
+      if (data.row.index === body.length - 1) {
+        data.cell.styles.fillColor = [28, 28, 40];
+        data.cell.styles.textColor = [240, 192, 64];
+        data.cell.styles.fontStyle = 'bold';
+        data.cell.styles.fontSize = 11;
+      }
+    }
+  });
+
+  const finalY = doc.lastAutoTable.finalY + 10;
+  doc.setFontSize(14);
+  doc.setTextColor(240, 192, 64);
+  doc.setFont('helvetica', 'bold');
+  doc.text(`GRAND TOTAL: ${grandTotal} items`, pageW / 2, finalY, { align: 'center' });
+
+  if (photoData) {
+    const imgY = finalY + 8;
+    const remainingH = 280 - imgY;
+    if (remainingH > 30) {
+      try {
+        const imgH = Math.min(remainingH, 100);
+        const imgW = imgH * 0.75;
+        doc.addImage(photoData, 'JPEG', (pageW - imgW) / 2, imgY, imgW, imgH);
+      } catch(e) {
+        // skip photo if format not supported
+      }
+    }
+  }
+
+  doc.setFontSize(7);
+  doc.setTextColor(107, 107, 133);
+  doc.text('Generated by CueMaster Laundry Counter', pageW / 2, 290, { align: 'center' });
+
+  const filename = `Laundry_${show.replace(/\s+/g, '_')}_${date}.pdf`;
+  doc.save(filename);
+
+  if (email) {
+    toast('PDF downloaded! Attach it to your email.');
+    setTimeout(() => {
+      window.location.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent('Laundry Count - ' + show + ' - ' + date)}&body=${encodeURIComponent('Hi,\n\nPlease find attached the laundry count for ' + show + ' on ' + date + '.\n\nTotal items: ' + grandTotal + '\n\nBest regards,\n' + (dept || 'Wardrobe Dept.'))}`;
+    }, 1000);
+  } else {
+    toast('PDF downloaded!');
+  }
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+init();
+</script>
+</body>
+</html>
