@@ -64,6 +64,50 @@ section{padding:120px 40px}
 .section-desc{font-size:17px;color:var(--text-dim);max-width:600px;line-height:1.8}
 .container{max-width:1200px;margin:0 auto}
 
+/* PORTUGUESE ADVANTAGE */
+.pt-advantage{background:var(--dark);position:relative;overflow:hidden}
+.pt-advantage::before{content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(200,162,78,0.06) 0%,transparent 70%);pointer-events:none}
+.pt-banner{display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.pt-flag{width:48px;height:32px;border-radius:4px;overflow:hidden;flex-shrink:0;position:relative;border:1px solid rgba(255,255,255,0.1)}
+.pt-flag-green{position:absolute;left:0;top:0;bottom:0;width:40%;background:#006600}
+.pt-flag-red{position:absolute;right:0;top:0;bottom:0;width:60%;background:#cc0000}
+.pt-flag-circle{position:absolute;left:40%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:#ffcc00;border:1.5px solid #006600}
+.pt-banner-text{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold)}
+.pt-headline{font-size:clamp(28px,4vw,48px);font-weight:800;line-height:1.15;margin-bottom:20px;max-width:700px}
+.pt-headline em{font-style:normal;color:var(--gold)}
+.pt-subtitle{font-size:18px;color:var(--text-dim);line-height:1.8;max-width:650px;margin-bottom:56px}
+.pt-pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.pt-pillar{padding:48px 32px;background:var(--gray);position:relative;overflow:hidden;transition:all .4s}
+.pt-pillar:hover{background:var(--gray-mid)}
+.pt-pillar::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);transform:scaleX(0);transition:transform .4s;transform-origin:left}
+.pt-pillar:hover::before{transform:scaleX(1)}
+.pt-pillar:first-child{border-radius:var(--radius) 0 0 var(--radius)}
+.pt-pillar:last-child{border-radius:0 var(--radius) var(--radius) 0}
+[dir="rtl"] .pt-pillar:first-child{border-radius:0 var(--radius) var(--radius) 0}
+[dir="rtl"] .pt-pillar:last-child{border-radius:var(--radius) 0 0 var(--radius)}
+.pt-pillar-num{font-size:48px;font-weight:900;color:rgba(200,162,78,0.12);line-height:1;margin-bottom:16px}
+.pt-pillar-title{font-size:20px;font-weight:700;margin-bottom:12px;color:#fff}
+.pt-pillar-desc{font-size:14px;color:var(--text-dim);line-height:1.7}
+.pt-bottom{display:flex;align-items:center;gap:40px;margin-top:56px;padding-top:40px;border-top:1px solid var(--gray-mid);flex-wrap:wrap}
+.pt-bottom-stat{text-align:center}
+.pt-bottom-stat .stat-num{font-size:32px}
+.pt-bottom-quote{font-size:16px;font-style:italic;color:var(--text-dim);line-height:1.7;max-width:500px;border-left:3px solid var(--gold);padding-left:20px}
+[dir="rtl"] .pt-bottom-quote{border-left:none;border-right:3px solid var(--gold);padding-left:0;padding-right:20px}
+@media(max-width:900px){
+  .pt-pillars{grid-template-columns:1fr 1fr}
+  .pt-pillar:first-child{border-radius:var(--radius) 0 0 0}
+  .pt-pillar:nth-child(2){border-radius:0 var(--radius) 0 0}
+  .pt-pillar:nth-child(3){border-radius:0 0 0 var(--radius)}
+  .pt-pillar:last-child{border-radius:0 0 var(--radius) 0}
+  .pt-bottom{flex-direction:column;align-items:flex-start}
+}
+@media(max-width:600px){
+  .pt-pillars{grid-template-columns:1fr}
+  .pt-pillar,.pt-pillar:first-child,.pt-pillar:last-child{border-radius:0}
+  .pt-pillar:first-child{border-radius:var(--radius) var(--radius) 0 0}
+  .pt-pillar:last-child{border-radius:0 0 var(--radius) var(--radius)}
+}
+
 /* ABOUT */
 .about{background:var(--darker)}
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
@@ -173,6 +217,7 @@ footer{padding:40px;text-align:center;border-top:1px solid var(--gray-mid);font-
 <nav id="nav">
   <div class="logo">JB<span> Investment Group</span></div>
   <ul class="nav-links" id="navLinks">
+    <li><a href="#advantage" data-en="Advantage" data-ar="الميزة">Advantage</a></li>
     <li><a href="#about" data-en="About" data-ar="نبذة">About</a></li>
     <li><a href="#career" data-en="Career" data-ar="المسيرة">Career</a></li>
     <li><a href="#projects" data-en="Projects" data-ar="المشاريع">Projects</a></li>
@@ -191,7 +236,7 @@ footer{padding:40px;text-align:center;border-top:1px solid var(--gray-mid);font-
   <div class="hero-content">
     <div class="hero-tag" data-en="Commercial Presentation" data-ar="العرض التجاري">Commercial Presentation</div>
     <h1 class="hero-title" data-en="JB Investment Group" data-ar="مجموعة جي بي للاستثمار">JB Investment Group</h1>
-    <p class="hero-sub" data-en="Strategic investment and commercial management in construction and infrastructure across Europe, North Africa and Latin America." data-ar="استثمار استراتيجي وإدارة تجارية في قطاع البناء والبنية التحتية في أوروبا وشمال أفريقيا وأمريكا اللاتينية.">Strategic investment and commercial management in construction and infrastructure across Europe, North Africa and Latin America.</p>
+    <p class="hero-sub" data-en="A Portuguese enterprise consolidating expertise, know-how, quality and competitiveness — delivering world-class construction and infrastructure across 3 continents." data-ar="مؤسسة برتغالية تجمع الخبرة والمعرفة والجودة والتنافسية — تنفذ مشاريع بناء وبنية تحتية عالمية المستوى عبر 3 قارات.">A Portuguese enterprise consolidating expertise, know-how, quality and competitiveness — delivering world-class construction and infrastructure across 3 continents.</p>
     <a href="#projects" class="hero-cta" data-en="View Portfolio ↓" data-ar="عرض المحفظة ↓">View Portfolio ↓</a>
     <div class="hero-stats">
       <div class="stat">
@@ -211,6 +256,53 @@ footer{padding:40px;text-align:center;border-top:1px solid var(--gray-mid);font-
   <div class="scroll-indicator">
     <span data-en="Scroll" data-ar="مرر">Scroll</span>
     <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- PORTUGUESE ADVANTAGE -->
+<section class="pt-advantage" id="advantage">
+  <div class="container">
+    <div class="pt-banner reveal">
+      <div class="pt-flag"><div class="pt-flag-green"></div><div class="pt-flag-red"></div><div class="pt-flag-circle"></div></div>
+      <div class="pt-banner-text" data-en="The Portuguese Advantage" data-ar="الميزة البرتغالية">The Portuguese Advantage</div>
+    </div>
+    <h2 class="pt-headline reveal" data-en="Why partner with a <em>Portuguese enterprise</em> for your Gulf projects?" data-ar="لماذا تختار شريكاً <em>برتغالياً</em> لمشاريعكم في الخليج؟" data-html="true">Why partner with a <em>Portuguese enterprise</em> for your Gulf projects?</h2>
+    <p class="pt-subtitle reveal" data-en="Portugal's construction sector has earned a global reputation for engineering excellence, delivering complex mega-projects on time and on budget — from airports to power plants, from Latin America to North Africa. JB Investment Group brings this legacy to the Gulf." data-ar="اكتسب قطاع البناء البرتغالي سمعة عالمية في التميز الهندسي، بتنفيذ مشاريع ضخمة معقدة في الوقت المحدد وضمن الميزانية — من المطارات إلى محطات الطاقة، من أمريكا اللاتينية إلى شمال أفريقيا. مجموعة جي بي للاستثمار تجلب هذا الإرث إلى الخليج.">Portugal's construction sector has earned a global reputation for engineering excellence, delivering complex mega-projects on time and on budget — from airports to power plants, from Latin America to North Africa. JB Investment Group brings this legacy to the Gulf.</p>
+
+    <div class="pt-pillars">
+      <div class="pt-pillar reveal">
+        <div class="pt-pillar-num">01</div>
+        <div class="pt-pillar-title" data-en="Expertise" data-ar="الخبرة">Expertise</div>
+        <div class="pt-pillar-desc" data-en="Decades of hands-on experience across industrial flooring, reinforced concrete, steel structures, façades and infrastructure — proven on projects from €2M to €75M." data-ar="عقود من الخبرة العملية في الأرضيات الصناعية والخرسانة المسلحة والهياكل الفولاذية والواجهات والبنية التحتية — مثبتة في مشاريع من 2 إلى 75 مليون يورو.">Decades of hands-on experience across industrial flooring, reinforced concrete, steel structures, façades and infrastructure — proven on projects from €2M to €75M.</div>
+      </div>
+      <div class="pt-pillar reveal">
+        <div class="pt-pillar-num">02</div>
+        <div class="pt-pillar-title" data-en="Know-How" data-ar="المعرفة">Know-How</div>
+        <div class="pt-pillar-desc" data-en="Deep technical knowledge transferred across 35 markets — from engineering and fabrication to transport and installation. A vertically integrated approach that controls every stage of delivery." data-ar="معرفة تقنية عميقة منقولة عبر 35 سوقاً — من التصميم والتصنيع إلى النقل والتركيب. نهج متكامل رأسياً يتحكم في كل مرحلة من مراحل التنفيذ.">Deep technical knowledge transferred across 35 markets — from engineering and fabrication to transport and installation. A vertically integrated approach that controls every stage of delivery.</div>
+      </div>
+      <div class="pt-pillar reveal">
+        <div class="pt-pillar-num">03</div>
+        <div class="pt-pillar-title" data-en="Quality" data-ar="الجودة">Quality</div>
+        <div class="pt-pillar-desc" data-en="European engineering standards and rigorous quality control — trusted by Airbus, Iberdrola, Bouygues, Vinci/Astaldi and other global leaders who demand zero-compromise execution." data-ar="معايير هندسية أوروبية ورقابة جودة صارمة — موثوقة من Airbus وIberdrola وBouygues وVinci/Astaldi وقادة عالميين آخرين يطلبون تنفيذاً بلا تنازلات.">European engineering standards and rigorous quality control — trusted by Airbus, Iberdrola, Bouygues, Vinci/Astaldi and other global leaders who demand zero-compromise execution.</div>
+      </div>
+      <div class="pt-pillar reveal">
+        <div class="pt-pillar-num">04</div>
+        <div class="pt-pillar-title" data-en="Competitiveness" data-ar="التنافسية">Competitiveness</div>
+        <div class="pt-pillar-desc" data-en="Portuguese firms offer exceptional value — first-world engineering capability at competitive pricing, with a proven track record of entering high-growth emerging markets and delivering at scale." data-ar="تقدم الشركات البرتغالية قيمة استثنائية — قدرات هندسية على مستوى عالمي بأسعار تنافسية، مع سجل حافل في دخول الأسواق الناشئة عالية النمو والتنفيذ على نطاق واسع.">Portuguese firms offer exceptional value — first-world engineering capability at competitive pricing, with a proven track record of entering high-growth emerging markets and delivering at scale.</div>
+      </div>
+    </div>
+
+    <div class="pt-bottom reveal">
+      <div class="pt-bottom-stat">
+        <div class="stat-num">25+</div>
+        <div class="stat-label" data-en="Years of Track Record" data-ar="عاماً من الإنجاز">Years of Track Record</div>
+      </div>
+      <div class="pt-bottom-stat">
+        <div class="stat-num">3</div>
+        <div class="stat-label" data-en="Continents" data-ar="قارات">Continents</div>
+      </div>
+      <div class="pt-bottom-quote" data-en="&ldquo;The ability to open doors in negotiations on major projects with leading construction companies — combining Portuguese engineering rigour with the agility to operate in any market.&rdquo;" data-ar="&ldquo;القدرة على فتح أبواب التفاوض في مشاريع كبرى مع شركات رائدة — بالجمع بين الدقة الهندسية البرتغالية ومرونة العمل في أي سوق.&rdquo;">&ldquo;The ability to open doors in negotiations on major projects with leading construction companies — combining Portuguese engineering rigour with the agility to operate in any market.&rdquo;</div>
+    </div>
   </div>
 </section>
 
@@ -495,7 +587,11 @@ function setLang(lang) {
   document.querySelectorAll('.lang-switch button').forEach(b => b.classList.remove('active'));
   document.querySelector(`.lang-switch button[onclick="setLang('${lang}')"]`).classList.add('active');
   document.querySelectorAll(`[data-${lang}]`).forEach(el => {
-    el.textContent = el.getAttribute(`data-${lang}`);
+    if (el.getAttribute('data-html') === 'true') {
+      el.innerHTML = el.getAttribute(`data-${lang}`);
+    } else {
+      el.textContent = el.getAttribute(`data-${lang}`);
+    }
   });
 }
 </script>
