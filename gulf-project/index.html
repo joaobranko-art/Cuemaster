@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JB Investment Group — Your Portuguese Liaison to the Gulf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Arabic:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#b8924a;
+  --gold-light:#d4ad5c;
+  --gold-pale:#f5e6c4;
+  --dark:#1a1a1a;
+  --darker:#111;
+  --gray:#f5f3ef;
+  --gray-mid:#e8e4de;
+  --white:#fefcf9;
+  --text:#1a1a1a;
+  --text-dim:#6b6560;
+  --accent:#b8924a;
+  --radius:12px;
+  --font:'Inter',sans-serif;
+  --font-serif:'Cormorant Garamond',Georgia,serif;
+  --font-ar:'Noto Sans Arabic','Inter',sans-serif;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);background:var(--white);color:var(--text);overflow-x:hidden;line-height:1.6}
+[dir="rtl"] body{font-family:var(--font-ar)}
+
+/* LANGUAGE SWITCHER */
+.lang-switch{position:fixed;top:24px;right:24px;z-index:1000;display:flex;gap:4px;background:rgba(255,252,249,0.9);backdrop-filter:blur(20px);border:1px solid var(--gray-mid);border-radius:50px;padding:4px;transition:all .3s}
+[dir="rtl"] .lang-switch{right:auto;left:24px}
+.lang-switch button{border:none;background:transparent;color:var(--text-dim);font-size:13px;font-weight:600;padding:8px 18px;border-radius:50px;cursor:pointer;transition:all .3s;letter-spacing:.5px}
+.lang-switch button.active{background:var(--gold);color:#fff}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;padding:20px 40px;display:flex;align-items:center;justify-content:space-between;background:transparent;transition:all .4s}
+nav.scrolled{background:rgba(255,252,249,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--gray-mid);box-shadow:0 2px 20px rgba(0,0,0,0.04)}
+.logo-img{height:48px;width:auto;transition:height .3s}
+nav.scrolled .logo-img{height:40px}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{color:rgba(255,255,255,0.7);text-decoration:none;font-size:12px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;transition:color .3s}
+nav.scrolled .nav-links a{color:var(--text-dim)}
+.nav-links a:hover{color:var(--gold)}
+.menu-toggle{display:none;background:none;border:none;color:#fff;font-size:24px;cursor:pointer}
+nav.scrolled .menu-toggle{color:var(--text)}
+
+/* HERO */
+.hero{position:relative;height:100vh;min-height:700px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.4}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,26,26,0.3) 0%,rgba(26,26,26,0.6) 60%,rgba(26,26,26,0.85) 100%)}
+.hero-content{position:relative;z-index:2;text-align:center;max-width:900px;padding:0 24px}
+.hero-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:5px;text-transform:uppercase;color:var(--gold-pale);margin-bottom:24px;padding:10px 28px;border:1px solid rgba(184,146,74,0.4);border-radius:0}
+.hero-title{font-family:var(--font-serif);font-size:clamp(44px,7vw,88px);font-weight:300;line-height:1.05;margin-bottom:24px;color:#fff;letter-spacing:-1px}
+.hero-sub{font-size:clamp(15px,1.8vw,18px);color:rgba(255,255,255,0.65);font-weight:300;max-width:580px;margin:0 auto 40px;line-height:1.8}
+.hero-stats{display:flex;gap:48px;justify-content:center;flex-wrap:wrap;margin-top:48px}
+.stat{text-align:center}
+.stat-num{font-family:var(--font-serif);font-size:clamp(36px,5vw,56px);font-weight:400;color:var(--gold-light);line-height:1}
+.stat-label{font-size:11px;color:rgba(255,255,255,0.5);margin-top:8px;text-transform:uppercase;letter-spacing:2px;font-weight:400}
+.hero-cta{display:inline-flex;align-items:center;gap:10px;padding:16px 44px;background:var(--gold);color:#fff;font-weight:500;font-size:12px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:0;transition:all .3s}
+.hero-cta:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 12px 40px rgba(184,146,74,0.25)}
+
+/* SECTIONS */
+section{padding:120px 40px}
+.section-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+.section-title{font-family:var(--font-serif);font-size:clamp(32px,4vw,52px);font-weight:400;line-height:1.15;margin-bottom:24px;color:var(--dark)}
+.section-desc{font-size:16px;color:var(--text-dim);max-width:600px;line-height:1.9}
+.container{max-width:1200px;margin:0 auto}
+
+/* PORTUGUESE ADVANTAGE */
+.pt-advantage{background:var(--white);position:relative;overflow:hidden}
+.pt-advantage::before{content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(184,146,74,0.06) 0%,transparent 70%);pointer-events:none}
+.pt-banner{display:flex;align-items:center;gap:16px;margin-bottom:48px}
+.pt-flag{width:48px;height:32px;border-radius:4px;overflow:hidden;flex-shrink:0;position:relative;border:1px solid rgba(0,0,0,0.08)}
+.pt-flag-green{position:absolute;left:0;top:0;bottom:0;width:40%;background:#006600}
+.pt-flag-red{position:absolute;right:0;top:0;bottom:0;width:60%;background:#cc0000}
+.pt-flag-circle{position:absolute;left:40%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:#ffcc00;border:1.5px solid #006600}
+.pt-banner-text{font-size:12px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--gold)}
+.pt-headline{font-family:var(--font-serif);font-size:clamp(28px,4vw,48px);font-weight:400;line-height:1.2;margin-bottom:20px;max-width:700px;color:var(--dark)}
+.pt-headline em{font-style:italic;color:var(--gold)}
+.pt-subtitle{font-size:16px;color:var(--text-dim);line-height:1.9;max-width:650px;margin-bottom:56px}
+.pt-pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--gray-mid)}
+.pt-pillar{padding:48px 32px;background:var(--white);position:relative;overflow:hidden;transition:all .4s}
+.pt-pillar:hover{background:var(--gray)}
+.pt-pillar::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-light));transform:scaleX(0);transition:transform .4s;transform-origin:left}
+.pt-pillar:hover::before{transform:scaleX(1)}
+.pt-pillar-num{font-family:var(--font-serif);font-size:48px;font-weight:300;color:rgba(184,146,74,0.2);line-height:1;margin-bottom:16px}
+.pt-pillar-title{font-size:18px;font-weight:600;margin-bottom:12px;color:var(--dark)}
+.pt-pillar-desc{font-size:14px;color:var(--text-dim);line-height:1.7}
+.pt-bottom{display:flex;align-items:center;gap:40px;margin-top:56px;padding-top:40px;border-top:1px solid var(--gray-mid);flex-wrap:wrap}
+.pt-bottom-stat{text-align:center}
+.pt-bottom-stat .stat-num{font-family:var(--font-serif);font-size:32px;font-weight:400;color:var(--gold)}
+.pt-bottom-quote{font-family:var(--font-serif);font-size:17px;font-style:italic;color:var(--text-dim);line-height:1.7;max-width:500px;border-left:2px solid var(--gold);padding-left:20px}
+[dir="rtl"] .pt-bottom-quote{border-left:none;border-right:2px solid var(--gold);padding-left:0;padding-right:20px}
+@media(max-width:900px){
+  .pt-pillars{grid-template-columns:1fr 1fr}
+  .pt-bottom{flex-direction:column;align-items:flex-start}
+}
+@media(max-width:600px){
+  .pt-pillars{grid-template-columns:1fr}
+}
+
+/* ABOUT */
+.about{background:var(--gray)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.about-img{position:relative;overflow:hidden;aspect-ratio:4/3}
+.about-img img{width:100%;height:100%;object-fit:cover}
+.about-img::after{content:'';position:absolute;inset:0;border:1px solid rgba(184,146,74,0.15);pointer-events:none}
+
+/* TIMELINE */
+.timeline{position:relative}
+.timeline-line{position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,var(--gold-pale),var(--gold),var(--gold-pale),transparent);transform:translateX(-50%)}
+[dir="rtl"] .timeline-line{left:auto;right:50%;transform:translateX(50%)}
+.timeline-item{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-bottom:80px;position:relative}
+.timeline-item:nth-child(even) .tl-content{order:2}
+.timeline-item:nth-child(even) .tl-media{order:1}
+.tl-dot{position:absolute;left:50%;top:24px;width:14px;height:14px;background:var(--gold);border-radius:50%;transform:translateX(-50%);border:3px solid var(--white);z-index:2;box-shadow:0 0 0 4px rgba(184,146,74,0.15)}
+[dir="rtl"] .tl-dot{left:auto;right:50%;transform:translateX(50%)}
+.tl-year{font-family:var(--font-serif);font-size:16px;font-weight:400;color:var(--gold);letter-spacing:2px;margin-bottom:8px}
+.tl-company{font-family:var(--font-serif);font-size:26px;font-weight:500;margin-bottom:4px;color:var(--dark)}
+.tl-role{font-size:13px;color:var(--text-dim);margin-bottom:16px;font-style:italic}
+.tl-desc{font-size:14px;color:var(--text-dim);line-height:1.8}
+.tl-media{overflow:hidden;aspect-ratio:16/10}
+.tl-media img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.tl-media:hover img{transform:scale(1.05)}
+
+/* PROJECTS */
+.projects-section{background:var(--gray)}
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:20px;margin-top:60px}
+.project-card{position:relative;overflow:hidden;aspect-ratio:4/3;cursor:pointer}
+.project-card img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.project-card:hover img{transform:scale(1.05)}
+.project-info{position:absolute;bottom:0;left:0;right:0;padding:32px;background:linear-gradient(transparent,rgba(26,26,26,0.85));transition:all .3s}
+.project-name{font-family:var(--font-serif);font-size:22px;font-weight:400;margin-bottom:4px;color:#fff}
+.project-meta{font-size:12px;color:rgba(255,255,255,0.6)}
+.project-value{display:inline-block;margin-top:8px;padding:4px 14px;background:rgba(184,146,74,0.2);color:var(--gold-light);font-size:12px;font-weight:600;letter-spacing:1px}
+
+/* MAP */
+.map-section{position:relative;text-align:center}
+.map-section img{max-width:100%;border-radius:var(--radius);margin-top:48px}
+
+/* CAPABILITIES / VENTURES */
+.caps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:60px}
+.cap-card{padding:44px 36px;background:var(--white);border:1px solid var(--gray-mid);transition:all .4s}
+.cap-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:0 20px 60px rgba(184,146,74,0.08)}
+.cap-icon{font-size:32px;margin-bottom:20px}
+.cap-title{font-family:var(--font-serif);font-size:22px;font-weight:500;margin-bottom:12px;color:var(--dark)}
+.cap-desc{font-size:14px;color:var(--text-dim);line-height:1.8}
+
+/* CLIENTS */
+.clients-section{background:var(--white);text-align:center}
+.client-tag{white-space:nowrap;padding:10px 24px;background:transparent;border:1px solid var(--gray-mid);font-size:12px;color:var(--text-dim);font-weight:500;flex-shrink:0;letter-spacing:0.5px}
+.clients-marquee{overflow:hidden;position:relative;margin-top:48px}
+.clients-track{display:flex;gap:20px;animation:marquee 60s linear infinite;width:max-content}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* CONTACT */
+.contact{text-align:center;padding:160px 40px;position:relative;background:var(--gray)}
+.contact::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:1px;height:80px;background:linear-gradient(var(--gold),transparent)}
+.contact-email{font-family:var(--font-serif);font-size:clamp(20px,3vw,36px);font-weight:400;color:var(--gold);text-decoration:none;transition:opacity .3s}
+.contact-email:hover{opacity:.7}
+
+/* FOOTER */
+footer{padding:40px;text-align:center;border-top:1px solid var(--gray-mid);font-size:12px;color:var(--text-dim);letter-spacing:1px;background:var(--white)}
+
+/* ANIMATIONS */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s,transform .8s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* MOBILE */
+@media(max-width:900px){
+  section{padding:80px 20px}
+  .about-grid{grid-template-columns:1fr;gap:40px}
+  .timeline-line,.tl-dot{display:none}
+  .timeline-item{grid-template-columns:1fr;gap:24px}
+  .timeline-item:nth-child(even) .tl-content{order:1}
+  .timeline-item:nth-child(even) .tl-media{order:2}
+  .projects-grid{grid-template-columns:1fr}
+  .caps-grid{grid-template-columns:1fr!important}
+  .hero-stats{gap:24px}
+  .nav-links{display:none}
+  .nav-links.open{display:flex;flex-direction:column;position:fixed;inset:0;background:rgba(255,252,249,0.98);align-items:center;justify-content:center;gap:24px;z-index:1001}
+  .nav-links.open a{color:var(--dark)!important}
+  .menu-toggle{display:block;z-index:1002}
+  .lang-switch{top:auto;bottom:24px;right:50%;transform:translateX(50%)}
+  [dir="rtl"] .lang-switch{left:auto;right:50%;transform:translateX(50%)}
+}
+
+/* RTL adjustments */
+[dir="rtl"] .section-desc,[dir="rtl"] .tl-desc,[dir="rtl"] .cap-desc{text-align:right}
+[dir="rtl"] .hero-content{direction:rtl}
+
+/* Scroll indicator */
+.scroll-indicator{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:2}
+.scroll-indicator span{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.4)}
+.scroll-line{width:1px;height:40px;background:linear-gradient(var(--gold-light),transparent);animation:scrollPulse 2s infinite}
+@keyframes scrollPulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* Divider */
+.section-divider{width:60px;height:1px;background:var(--gold);margin:0 auto 24px}
+</style>
+</head>
+<body>
+
+<!-- LANGUAGE SWITCHER -->
+<div class="lang-switch">
+  <button class="active" onclick="setLang('en')">EN</button>
+  <button onclick="setLang('ar')">عربي</button>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#hero"><img src="assets/images/logo.png" alt="JB Investment Group" class="logo-img"></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about" data-en="Who We Are" data-ar="من نحن">Who We Are</a></li>
+    <li><a href="#advantage" data-en="Why Portugal" data-ar="لماذا البرتغال">Why Portugal</a></li>
+    <li><a href="#ventures" data-en="Ventures" data-ar="الفرص">Ventures</a></li>
+    <li><a href="#projects" data-en="Track Record" data-ar="السجل">Track Record</a></li>
+    <li><a href="#contact" data-en="Contact" data-ar="تواصل">Contact</a></li>
+  </ul>
+  <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <video class="hero-video" autoplay muted loop playsinline>
+    <source src="assets/video/hero-video.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-tag" data-en="Your Portuguese Liaison to the Middle East" data-ar="حلقة الوصل البرتغالية إلى الشرق الأوسط">Your Portuguese Liaison to the Middle East</div>
+    <h1 class="hero-title" data-en="JB Investment Group" data-ar="مجموعة جي بي للاستثمار">JB Investment Group</h1>
+    <p class="hero-sub" data-en="Connecting Gulf investors with Portugal's finest — construction expertise, prime real estate on the Silver Coast, and cutting-edge modular building systems." data-ar="نربط مستثمري الخليج بأفضل ما تقدمه البرتغال — خبرات البناء، عقارات مميزة على الساحل الفضي، وأنظمة بناء معيارية متطورة.">Connecting Gulf investors with Portugal's finest — construction expertise, prime real estate on the Silver Coast, and cutting-edge modular building systems.</p>
+    <a href="#ventures" class="hero-cta" data-en="Explore Ventures ↓" data-ar="اكتشف الفرص ↓">Explore Ventures ↓</a>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">35</div>
+        <div class="stat-label" data-en="Markets Studied" data-ar="سوقاً مدروسة">Markets Studied</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">13</div>
+        <div class="stat-label" data-en="Countries Delivered" data-ar="دولة تم التنفيذ فيها">Countries Delivered</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">€300M+</div>
+        <div class="stat-label" data-en="Project Value" data-ar="قيمة المشاريع">Project Value</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span data-en="Scroll" data-ar="مرر">Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- WHO WE ARE -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="reveal">
+        <div class="section-tag" data-en="Who We Are" data-ar="من نحن">Who We Are</div>
+        <h2 class="section-title" data-en="Your Bridge Between Portugal & the Gulf" data-ar="جسركم بين البرتغال والخليج">Your Bridge Between Portugal & the Gulf</h2>
+        <p class="section-desc" data-en="JB Investment Group, led by João Branco, serves as the dedicated Portuguese liaison to the Middle East — identifying, curating and presenting high-value investment ventures to Gulf-based investors seeking partnership with established Portuguese enterprises." data-ar="مجموعة جي بي للاستثمار، بقيادة جواو برانكو، تعمل كحلقة وصل برتغالية مخصصة للشرق الأوسط — تحدد وتختار وتقدم فرصاً استثمارية عالية القيمة للمستثمرين في الخليج الباحثين عن شراكات مع مؤسسات برتغالية راسخة.">JB Investment Group, led by João Branco, serves as the dedicated Portuguese liaison to the Middle East — identifying, curating and presenting high-value investment ventures to Gulf-based investors seeking partnership with established Portuguese enterprises.</p>
+        <p class="section-desc" style="margin-top:20px" data-en="We consolidate the best of Portuguese expertise, know-how, quality and competitiveness into clear investment propositions — from large-scale construction and infrastructure to premium real estate development on the Silver Coast and innovative modular building systems." data-ar="نجمع أفضل ما تقدمه البرتغال من خبرة ومعرفة وجودة وتنافسية في عروض استثمارية واضحة — من البناء والبنية التحتية واسعة النطاق إلى التطوير العقاري المتميز على الساحل الفضي وأنظمة البناء المعيارية المبتكرة.">We consolidate the best of Portuguese expertise, know-how, quality and competitiveness into clear investment propositions — from large-scale construction and infrastructure to premium real estate development on the Silver Coast and innovative modular building systems.</p>
+      </div>
+      <div class="about-img reveal">
+        <img src="assets/images/world-map.jpg" alt="Global Footprint" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTUGUESE ADVANTAGE -->
+<section class="pt-advantage" id="advantage">
+  <div class="container">
+    <div class="pt-banner reveal">
+      <div class="pt-flag"><div class="pt-flag-green"></div><div class="pt-flag-red"></div><div class="pt-flag-circle"></div></div>
+      <div class="pt-banner-text" data-en="Why Portugal" data-ar="لماذا البرتغال">Why Portugal</div>
+    </div>
+    <h2 class="pt-headline reveal" data-en="Why partner with <em>Portuguese enterprises</em>?" data-ar="لماذا تختار الشراكة مع <em>مؤسسات برتغالية</em>؟" data-html="true">Why partner with <em>Portuguese enterprises</em>?</h2>
+    <p class="pt-subtitle reveal" data-en="Portugal has earned a global reputation for engineering excellence and construction quality. Portuguese companies deliver complex mega-projects on time and on budget across 3 continents. JB Investment Group connects this excellence directly to Gulf investors." data-ar="اكتسبت البرتغال سمعة عالمية في التميز الهندسي وجودة البناء. تنفذ الشركات البرتغالية مشاريع ضخمة معقدة في الوقت المحدد وضمن الميزانية عبر 3 قارات. مجموعة جي بي للاستثمار تربط هذا التميز مباشرة بمستثمري الخليج.">Portugal has earned a global reputation for engineering excellence and construction quality. Portuguese companies deliver complex mega-projects on time and on budget across 3 continents. JB Investment Group connects this excellence directly to Gulf investors.</p>
+
+    <div class="pt-pillars">
+      <div class="pt-pillar reveal">
+        <div class="pt-pillar-num">01</div>
+        <div class="pt-pillar-title" data-en="Expertise" data-ar="الخبرة">Expertise</div>
+        <div class="pt-pillar-desc" data-en="Decades of hands-on experience across industrial flooring, reinforced concrete, steel structures, façades and infrastructure — proven on projects from €2M to €75M." data-ar="عقود من الخبرة العملية في الأرضيات الصناعية والخرسانة المسلحة والهياكل الفولاذية والواجهات والبنية التحتية — مثبتة في مشاريع من 2 إلى 75 مليون يورو.">Decades of hands-on experience across industrial flooring, reinforced concrete, steel structures, façades and infrastructure — proven on projects from €2M to €75M.</div>
+      </div>
+      <div class="pt-pillar reveal">
+        <div class="pt-pillar-num">02</div>
+        <div class="pt-pillar-title" data-en="Know-How" data-ar="المعرفة">Know-How</div>
+        <div class="pt-pillar-desc" data-en="Deep technical knowledge transferred across 35 markets — from engineering and fabrication to transport and installation. A vertically integrated approach that controls every stage of delivery." data-ar="معرفة تقنية عميقة منقولة عبر 35 سوقاً — من التصميم والتصنيع إلى النقل والتركيب. نهج متكامل رأسياً يتحكم في كل مرحلة من مراحل التنفيذ.">Deep technical knowledge transferred across 35 markets — from engineering and fabrication to transport and installation. A vertically integrated approach that controls every stage of delivery.</div>
+      </div>
+      <div class="pt-pillar reveal">
+        <div class="pt-pillar-num">03</div>
+        <div class="pt-pillar-title" data-en="Quality" data-ar="الجودة">Quality</div>
+        <div class="pt-pillar-desc" data-en="European engineering standards and rigorous quality control — trusted by Airbus, Iberdrola, Bouygues, Vinci/Astaldi and other global leaders who demand zero-compromise execution." data-ar="معايير هندسية أوروبية ورقابة جودة صارمة — موثوقة من Airbus وIberdrola وBouygues وVinci/Astaldi وقادة عالميين آخرين يطلبون تنفيذاً بلا تنازلات.">European engineering standards and rigorous quality control — trusted by Airbus, Iberdrola, Bouygues, Vinci/Astaldi and other global leaders who demand zero-compromise execution.</div>
+      </div>
+      <div class="pt-pillar reveal">
+        <div class="pt-pillar-num">04</div>
+        <div class="pt-pillar-title" data-en="Competitiveness" data-ar="التنافسية">Competitiveness</div>
+        <div class="pt-pillar-desc" data-en="First-world engineering capability at competitive pricing, with a proven track record of entering high-growth emerging markets and delivering at scale." data-ar="قدرات هندسية على مستوى عالمي بأسعار تنافسية، مع سجل حافل في دخول الأسواق الناشئة عالية النمو والتنفيذ على نطاق واسع.">First-world engineering capability at competitive pricing, with a proven track record of entering high-growth emerging markets and delivering at scale.</div>
+      </div>
+    </div>
+
+    <div class="pt-bottom reveal">
+      <div class="pt-bottom-stat">
+        <div class="stat-num">25+</div>
+        <div class="stat-label" data-en="Years of Track Record" data-ar="عاماً من الإنجاز">Years of Track Record</div>
+      </div>
+      <div class="pt-bottom-stat">
+        <div class="stat-num">3</div>
+        <div class="stat-label" data-en="Continents" data-ar="قارات">Continents</div>
+      </div>
+      <div class="pt-bottom-quote" data-en="&ldquo;We bring Portuguese engineering rigour and the agility to operate in any market — opening doors to major projects with leading construction companies worldwide.&rdquo;" data-ar="&ldquo;نجلب الدقة الهندسية البرتغالية ومرونة العمل في أي سوق — نفتح أبواب المشاريع الكبرى مع شركات البناء الرائدة عالمياً.&rdquo;">&ldquo;We bring Portuguese engineering rigour and the agility to operate in any market — opening doors to major projects with leading construction companies worldwide.&rdquo;</div>
+    </div>
+  </div>
+</section>
+
+<!-- INVESTMENT VENTURES -->
+<section id="ventures" style="background:var(--darker)">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:60px" class="reveal">
+      <div class="section-tag" data-en="Investment Ventures" data-ar="فرص الاستثمار">Investment Ventures</div>
+      <h2 class="section-title" data-en="Three Pillars of Opportunity" data-ar="ثلاثة محاور للفرص">Three Pillars of Opportunity</h2>
+      <p class="section-desc" style="margin:0 auto;text-align:center" data-en="We present curated investment opportunities across three high-potential sectors, each backed by established Portuguese enterprises with proven track records." data-ar="نقدم فرصاً استثمارية مختارة عبر ثلاثة قطاعات عالية الإمكانات، كل منها مدعوم بمؤسسات برتغالية راسخة ذات سجلات حافلة.">We present curated investment opportunities across three high-potential sectors, each backed by established Portuguese enterprises with proven track records.</p>
+    </div>
+    <div class="caps-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="cap-card reveal" style="border-top:2px solid var(--gold)">
+        <div class="cap-icon">🏗️</div>
+        <div class="cap-title" data-en="Construction & Infrastructure" data-ar="البناء والبنية التحتية">Construction & Infrastructure</div>
+        <div class="cap-desc" data-en="Partner with Casimiro Fernandes — a seasoned Portuguese construction strategist with €300M+ in delivered projects across 13 countries. Expertise in steel structures, industrial flooring, façades and mega-infrastructure. Seeking Gulf partners for joint ventures in the Middle East construction market." data-ar="شارك مع كازيميرو فرنانديز — استراتيجي بناء برتغالي متمرّس بمشاريع منفذة تتجاوز 300 مليون يورو في 13 دولة. خبرة في الهياكل الفولاذية والأرضيات الصناعية والواجهات والبنية التحتية الكبرى. يبحث عن شركاء خليجيين لمشاريع مشتركة في سوق البناء بالشرق الأوسط.">Partner with Casimiro Fernandes — a seasoned Portuguese construction strategist with €300M+ in delivered projects across 13 countries. Expertise in steel structures, industrial flooring, façades and mega-infrastructure. Seeking Gulf partners for joint ventures in the Middle East construction market.</div>
+        <a href="#casimiro" style="display:inline-block;margin-top:16px;color:var(--gold);font-size:13px;font-weight:600;text-decoration:none" data-en="View Full Profile →" data-ar="عرض الملف الكامل →">View Full Profile →</a>
+      </div>
+      <div class="cap-card reveal" style="border-top:2px solid var(--gold)">
+        <div class="cap-icon">🏖️</div>
+        <div class="cap-title" data-en="Portuguese Real Estate" data-ar="العقارات البرتغالية">Portuguese Real Estate</div>
+        <div class="cap-desc" data-en="Premium large-plot development opportunities on Portugal's Silver Coast — one of Europe's most sought-after coastal regions. Ideal for resort developments, residential communities and mixed-use projects. Strategic locations with strong appreciation potential and Golden Visa eligibility." data-ar="فرص تطوير قطع أراضٍ كبيرة ممتازة على الساحل الفضي البرتغالي — أحد أكثر المناطق الساحلية طلباً في أوروبا. مثالية لتطوير المنتجعات والمجتمعات السكنية والمشاريع متعددة الاستخدامات. مواقع استراتيجية مع إمكانات تقدير قوية وأهلية التأشيرة الذهبية.">Premium large-plot development opportunities on Portugal's Silver Coast — one of Europe's most sought-after coastal regions. Ideal for resort developments, residential communities and mixed-use projects. Strategic locations with strong appreciation potential and Golden Visa eligibility.</div>
+        <span style="display:inline-block;margin-top:16px;color:var(--gold);font-size:13px;font-weight:600" data-en="Opportunities Available →" data-ar="فرص متاحة →">Opportunities Available →</span>
+      </div>
+      <div class="cap-card reveal" style="border-top:2px solid var(--gold)">
+        <div class="cap-icon">🧱</div>
+        <div class="cap-title" data-en="Modular Building Systems" data-ar="أنظمة البناء المعيارية">Modular Building Systems</div>
+        <div class="cap-desc" data-en="Cutting-edge Portuguese modular construction technology — faster build times, lower costs, and superior quality control. Factory-built precision meets on-site efficiency. Perfect for large-scale housing, hospitality and commercial developments in the Gulf region." data-ar="تكنولوجيا بناء معيارية برتغالية متطورة — أوقات بناء أسرع وتكاليف أقل ورقابة جودة متفوقة. دقة التصنيع المسبق تلتقي بكفاءة الموقع. مثالية للإسكان واسع النطاق والضيافة والتطوير التجاري في منطقة الخليج.">Cutting-edge Portuguese modular construction technology — faster build times, lower costs, and superior quality control. Factory-built precision meets on-site efficiency. Perfect for large-scale housing, hospitality and commercial developments in the Gulf region.</div>
+        <span style="display:inline-block;margin-top:16px;color:var(--gold);font-size:13px;font-weight:600" data-en="Learn More →" data-ar="اعرف المزيد →">Learn More →</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CASIMIRO FERNANDES — FEATURED PARTNER -->
+<section class="about" id="casimiro">
+  <div class="container">
+    <div class="about-grid">
+      <div class="reveal">
+        <div class="section-tag" data-en="Featured Partner" data-ar="شريك مميز">Featured Partner</div>
+        <h2 class="section-title" data-en="Casimiro Fernandes" data-ar="كازيميرو فرنانديز">Casimiro Fernandes</h2>
+        <p class="section-desc" data-en="A construction technician with extensive experience in commercial management and company administration. With broad experience in corporate strategy and executive-level project development both in Portugal and abroad, Casimiro has delivered numerous projects across Europe, North Africa and Latin America — including thousands of square meters of industrial flooring and major infrastructure works." data-ar="تقني بناء يتمتع بخبرة واسعة في الإدارة التجارية وإدارة الشركات. بخبرة عميقة في الاستراتيجية المؤسسية وتطوير المشاريع على المستوى التنفيذي في البرتغال والخارج، نفّذ كازيميرو مشاريع عديدة في أوروبا وشمال أفريقيا وأمريكا اللاتينية — تشمل آلاف الأمتار المربعة من الأرضيات الصناعية وأعمال بنية تحتية كبرى.">A construction technician with extensive experience in commercial management and company administration. With broad experience in corporate strategy and executive-level project development both in Portugal and abroad, Casimiro has delivered numerous projects across Europe, North Africa and Latin America — including thousands of square meters of industrial flooring and major infrastructure works.</p>
+        <p class="section-desc" style="margin-top:16px" data-en="Now seeking strategic partners in Qatar and the Middle East to bring Portuguese construction excellence to Gulf mega-projects." data-ar="يبحث الآن عن شركاء استراتيجيين في قطر والشرق الأوسط لجلب التميز البرتغالي في البناء إلى المشاريع الكبرى في الخليج.">Now seeking strategic partners in Qatar and the Middle East to bring Portuguese construction excellence to Gulf mega-projects.</p>
+      </div>
+      <div class="about-img reveal">
+        <img src="assets/images/casimiro-portrait.jpg" alt="Casimiro Fernandes" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CASIMIRO CAREER TIMELINE -->
+<section class="timeline-section" id="career">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:80px" class="reveal">
+      <div class="section-tag" data-en="Track Record" data-ar="السجل المهني">Track Record</div>
+      <h2 class="section-title" data-en="Casimiro Fernandes — Career" data-ar="كازيميرو فرنانديز — المسيرة">Casimiro Fernandes — Career</h2>
+    </div>
+    <div class="timeline" style="position:relative">
+      <div class="timeline-line"></div>
+
+      <div class="timeline-item reveal">
+        <div class="tl-content">
+          <div class="tl-year">1998</div>
+          <div class="tl-company">Unipavimentos</div>
+          <div class="tl-role" data-en="Administrator — Portugal" data-ar="مدير — البرتغال">Administrator — Portugal</div>
+          <div class="tl-desc" data-en="Industrial flooring in France for Airbus, Liebherr, Laurial, Cofape. Projects include Paulo Laureano Winery (€2.5M), Bioethanol Plant for Abengoa (€5.2M), Solar Plants in Spain, Morocco & Algeria, 600-unit Housing in Algeria (€75M), Power Station for Iberdrola (€6.6M)." data-ar="أرضيات صناعية في فرنسا لعملاء Airbus وLiebherr وLaurial وCofape. مشاريع تشمل مصنع نبيذ Paulo Laureano (2.5 مليون يورو)، محطة إيثانول حيوي لـ Abengoa (5.2 مليون يورو)، محطات طاقة شمسية في إسبانيا والمغرب والجزائر، مشروع إسكاني 600 وحدة في الجزائر (75 مليون يورو).">Industrial flooring in France for Airbus, Liebherr, Laurial, Cofape. Projects include Paulo Laureano Winery (€2.5M), Bioethanol Plant for Abengoa (€5.2M), Solar Plants in Spain, Morocco & Algeria, 600-unit Housing in Algeria (€75M), Power Station for Iberdrola (€6.6M).</div>
+        </div>
+        <div class="tl-media"><img src="assets/images/unipavimentos.jpg" alt="Unipavimentos" loading="lazy"></div>
+        <div class="tl-dot"></div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="tl-content">
+          <div class="tl-year">2011</div>
+          <div class="tl-company">VIXSTEEL</div>
+          <div class="tl-role" data-en="Founding Partner — Brazil" data-ar="شريك مؤسس — البرازيل">Founding Partner — Brazil</div>
+          <div class="tl-desc" data-en="Responsible for the commercial strategy in securing projects for the company's structural-steel erection activities." data-ar="مسؤول عن الاستراتيجية التجارية للحصول على مشاريع تركيب الهياكل الفولاذية.">Responsible for the commercial strategy in securing projects for the company's structural-steel erection activities.</div>
+        </div>
+        <div class="tl-media"><img src="assets/images/vixsteel.jpg" alt="VIXSTEEL" loading="lazy"></div>
+        <div class="tl-dot"></div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="tl-content">
+          <div class="tl-year">2013</div>
+          <div class="tl-company">AUCEMA Brasil</div>
+          <div class="tl-role" data-en="CEO — Brazil" data-ar="الرئيس التنفيذي — البرازيل">CEO — Brazil</div>
+          <div class="tl-desc" data-en="General manager for commercial areas and strategy for securing new projects." data-ar="المسؤول العام عن الأنشطة التجارية واستراتيجيات اكتساب المشاريع.">General manager for commercial areas and strategy for securing new projects.</div>
+        </div>
+        <div class="tl-media"><img src="assets/images/aucema.jpg" alt="AUCEMA" loading="lazy"></div>
+        <div class="tl-dot"></div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="tl-content">
+          <div class="tl-year">2014</div>
+          <div class="tl-company">Siderfer Brasil</div>
+          <div class="tl-role" data-en="CEO — Brazil" data-ar="الرئيس التنفيذي — البرازيل">CEO — Brazil</div>
+          <div class="tl-desc" data-en="Responsible for developing the commercial strategy with CSN (Companhia Siderúrgica Nacional), becoming the first partner company in Brazil for rebar cutting and bending with CSN." data-ar="تولّى وضع الاستراتيجيات التجارية مع شركة CSN، مما جعل شركته أول شريك لها في البرازيل في مجال قطع وثني حديد التسليح.">Responsible for developing the commercial strategy with CSN (Companhia Siderúrgica Nacional), becoming the first partner company in Brazil for rebar cutting and bending with CSN.</div>
+        </div>
+        <div class="tl-media"><img src="assets/images/siderfer.jpg" alt="Siderfer" loading="lazy"></div>
+        <div class="tl-dot"></div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="tl-content">
+          <div class="tl-year">2015</div>
+          <div class="tl-company">METTALFRAMME</div>
+          <div class="tl-role" data-en="Owner & CEO — Brazil" data-ar="المالك والرئيس التنفيذي — البرازيل">Owner & CEO — Brazil</div>
+          <div class="tl-desc" data-en="Took over leadership to restructure both companies. Despite Brazil's crisis, companies were successfully restructured by 2018. Key projects: Viaduct in Argentina (€27M), 6 Monorail Stations (€8M), 7 Bridges in Maranhão (€19M), 5 Viaducts in São Paulo (€8M)." data-ar="تولّى القيادة لإعادة هيكلة الشركتين. رغم أزمة البرازيل، تمت إعادة الهيكلة بنجاح بحلول 2018. مشاريع رئيسية: جسر علوي في الأرجنتين (27 مليون يورو)، 6 محطات قطار معلق (8 مليون يورو)، 7 جسور في مارانهاو (19 مليون يورو).">Took over leadership to restructure both companies. Despite Brazil's crisis, companies were successfully restructured by 2018. Key projects: Viaduct in Argentina (€27M), 6 Monorail Stations (€8M), 7 Bridges in Maranhão (€19M), 5 Viaducts in São Paulo (€8M).</div>
+        </div>
+        <div class="tl-media"><img src="assets/images/la-illia.jpg" alt="METTALFRAMME" loading="lazy"></div>
+        <div class="tl-dot"></div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="tl-content">
+          <div class="tl-year">2017</div>
+          <div class="tl-company">MTCA Chile</div>
+          <div class="tl-role" data-en="Partner — Chile" data-ar="شريك — تشيلي">Partner — Chile</div>
+          <div class="tl-desc" data-en="Façades for the new Santiago de Chile Airport for the Vinci/Astaldi consortium — 25,000 m² of glass-and-aluminum façades supported by 3,500 tons of steel structures. Phase 1: €8M. Phase 2: €38M." data-ar="تنفيذ واجهات مطار سانتياغو الجديد لتحالف Vinci/Astaldi — 25,000 م² من الزجاج والألمنيوم بدعم 3,500 طن من الهياكل الفولاذية. المرحلة الأولى: 8 مليون يورو. المرحلة الثانية: 38 مليون يورو.">Façades for the new Santiago de Chile Airport for the Vinci/Astaldi consortium — 25,000 m² of glass-and-aluminum façades supported by 3,500 tons of steel structures. Phase 1: €8M. Phase 2: €38M.</div>
+        </div>
+        <div class="tl-media"><img src="assets/images/mtca-chile.jpg" alt="MTCA Chile" loading="lazy"></div>
+        <div class="tl-dot"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS PORTFOLIO -->
+<section class="projects-section" id="projects">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:20px" class="reveal">
+      <div class="section-tag" data-en="Portfolio" data-ar="محفظة المشاريع">Portfolio</div>
+      <h2 class="section-title" data-en="Completed Projects" data-ar="المشاريع المنفذة">Completed Projects</h2>
+    </div>
+    <div class="projects-grid">
+
+      <div class="project-card reveal">
+        <img src="assets/images/santiago-airport.jpg" alt="Santiago Airport" loading="lazy">
+        <div class="project-info">
+          <div class="project-name" data-en="Santiago de Chile Airport" data-ar="مطار سانتياغو، تشيلي">Santiago de Chile Airport</div>
+          <div class="project-meta" data-en="2018 – 2019 · Engineering, Fabrication & Installation" data-ar="2018 – 2019 · تصميم، تصنيع وتركيب">2018 – 2019 · Engineering, Fabrication & Installation</div>
+          <div class="project-value">€38M</div>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <img src="assets/images/la-illia.jpg" alt="La Illia Expressway" loading="lazy">
+        <div class="project-info">
+          <div class="project-name" data-en="Nueva Traza — La Illia Expressway" data-ar="NUEVA TRAZA — طريق La Illia السريع">Nueva Traza — La Illia Expressway</div>
+          <div class="project-meta" data-en="2017 – 2018 · Buenos Aires" data-ar="2017 – 2018 · بوينس آيرس">2017 – 2018 · Buenos Aires</div>
+          <div class="project-value">€28M</div>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <img src="assets/images/bioethanol.jpg" alt="Bioethanol Plant" loading="lazy">
+        <div class="project-info">
+          <div class="project-name" data-en="Bioethanol Plant" data-ar="محطة الإيثانول الحيوي">Bioethanol Plant</div>
+          <div class="project-meta" data-en="2007 – 2008 · Lacq, Pau — France" data-ar="2007 – 2008 · Lacq, Pau — فرنسا">2007 – 2008 · Lacq, Pau — France</div>
+          <div class="project-value">€1.97M</div>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <img src="assets/images/solar-spain.jpg" alt="Solar Platform" loading="lazy">
+        <div class="project-info">
+          <div class="project-name" data-en="Solar Platform — Solnovas" data-ar="المنصة الشمسية — Solnovas">Solar Platform — Solnovas</div>
+          <div class="project-meta" data-en="2008 – 2009 · Seville — Spain" data-ar="2008 – 2009 · إشبيلية — إسبانيا">2008 – 2009 · Seville — Spain</div>
+          <div class="project-value">€3.75M</div>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <img src="assets/images/housing-algeria.jpg" alt="Housing Algeria" loading="lazy">
+        <div class="project-info">
+          <div class="project-name" data-en="Housing Development" data-ar="مشروع إسكاني">Housing Development</div>
+          <div class="project-meta" data-en="2011 – 2013 · Blida — Algeria" data-ar="2011 – 2013 · البليدة — الجزائر">2011 – 2013 · Blida — Algeria</div>
+          <div class="project-value">€48M</div>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <img src="assets/images/power-algeria.jpg" alt="Power Station Algeria" loading="lazy">
+        <div class="project-info">
+          <div class="project-name" data-en="Power Station" data-ar="محطة كهرباء">Power Station</div>
+          <div class="project-meta" data-en="2011 – 2012 · Koudiet — Algeria · Iberdrola" data-ar="2011 – 2012 · Koudiet — الجزائر · Iberdrola">2011 – 2012 · Koudiet — Algeria · Iberdrola</div>
+          <div class="project-value">€9.3M</div>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <img src="assets/images/bioenergy-romania.jpg" alt="Bioenergy Romania" loading="lazy">
+        <div class="project-info">
+          <div class="project-name" data-en="Bioenergy Plant" data-ar="محطة الطاقة الحيوية">Bioenergy Plant</div>
+          <div class="project-meta" data-en="2010 – 2011 · Lehliu — Romania" data-ar="2010 – 2011 · Lehliu — رومانيا">2010 – 2011 · Lehliu — Romania</div>
+          <div class="project-value">€3.8M</div>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <img src="assets/images/monorail-brazil.jpg" alt="Monorail Brazil" loading="lazy">
+        <div class="project-info">
+          <div class="project-name" data-en="Monorail" data-ar="القطار المعلق">Monorail</div>
+          <div class="project-meta" data-en="2012 – 2014 · São Paulo — Brazil" data-ar="2012 – 2014 · ساو باولو — البرازيل">2012 – 2014 · São Paulo — Brazil</div>
+          <div class="project-value">€18M</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CLIENTS MARQUEE -->
+<section class="clients-section" id="clients">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-tag" data-en="Clients" data-ar="العملاء">Clients</div>
+      <h2 class="section-title" data-en="Trusted By Industry Leaders" data-ar="موثوق من قادة القطاع">Trusted By Industry Leaders</h2>
+    </div>
+    <div class="clients-marquee">
+      <div class="clients-track" id="clientsTrack"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="section-tag" data-en="Get In Touch" data-ar="تواصل معنا">Get In Touch</div>
+  <h2 class="section-title" data-en="Let's Invest Together" data-ar="لنستثمر معاً">Let's Invest Together</h2>
+  <p class="section-desc" style="margin:16px auto 40px;text-align:center" data-en="Interested in partnering with Portuguese enterprises? Contact João Branco to explore construction ventures, Silver Coast real estate or modular building opportunities." data-ar="مهتم بالشراكة مع مؤسسات برتغالية؟ تواصل مع جواو برانكو لاستكشاف فرص البناء أو العقارات على الساحل الفضي أو أنظمة البناء المعيارية.">Interested in partnering with Portuguese enterprises? Contact João Branco to explore construction ventures, Silver Coast real estate or modular building opportunities.</p>
+  <a href="mailto:joao.branko@me.com" class="contact-email">joao.branko@me.com</a>
+</section>
+
+<footer>
+  <p>© 2024 JB Investment Group. <span data-en="All rights reserved." data-ar="جميع الحقوق محفوظة.">All rights reserved.</span></p>
+</footer>
+
+<script>
+const clients = ["Martifer","Mota-Engil","Bouygues","Iberdrola","Odebrecht","Andrade Gutierrez","Camargo Corrêa","Abener","Teyma","Conduril","Construcap","FCC","Queiros Galvão","Salini Impregilo","Teixeira Duarte","Elevo Group","Vopak","Gerdau","Worley Parsons","Lena Construções","Monte Adriano","Edifer","Tecnovia","CSN","Airbus","Liebherr","Auchan","Intecsa","CCR","Civilport"];
+const track = document.getElementById('clientsTrack');
+const allClients = [...clients, ...clients];
+allClients.forEach(c => {
+  const el = document.createElement('div');
+  el.className = 'client-tag';
+  el.textContent = c;
+  track.appendChild(el);
+});
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible') });
+}, {threshold: 0.1});
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Nav scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// Mobile menu
+document.getElementById('menuToggle').addEventListener('click', () => {
+  const nav = document.getElementById('navLinks');
+  nav.classList.toggle('open');
+  document.getElementById('menuToggle').textContent = nav.classList.contains('open') ? '✕' : '☰';
+});
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.getElementById('navLinks').classList.remove('open');
+    document.getElementById('menuToggle').textContent = '☰';
+  });
+});
+
+// Language switching
+function setLang(lang) {
+  const html = document.documentElement;
+  html.lang = lang;
+  html.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  document.querySelectorAll('.lang-switch button').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-switch button[onclick="setLang('${lang}')"]`).classList.add('active');
+  document.querySelectorAll(`[data-${lang}]`).forEach(el => {
+    if (el.getAttribute('data-html') === 'true') {
+      el.innerHTML = el.getAttribute(`data-${lang}`);
+    } else {
+      el.textContent = el.getAttribute(`data-${lang}`);
+    }
+  });
+}
+</script>
+</body>
+</html>
