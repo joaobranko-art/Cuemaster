@@ -366,7 +366,7 @@
     z-index: 100;
   }
 
-  .action-bar .btn { flex: 1; max-width: 220px; }
+  .action-bar .btn { flex: 1; max-width: 180px; }
 
   .empty-state {
     text-align: center;
@@ -447,10 +447,115 @@
     gap: 4px;
   }
 
+  select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6b85' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+
+  select:focus { border-color: var(--accent); }
+
+  textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+    min-height: 60px;
+  }
+
+  textarea:focus { border-color: var(--accent); }
+
+  .section-collapsible .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .section-collapsible .section-header .chevron {
+    width: 18px;
+    height: 18px;
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+
+  .section-collapsible.collapsed .section-body { display: none; }
+  .section-collapsible.collapsed .chevron { transform: rotate(-90deg); }
+
+  .profile-bar {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    margin-bottom: 12px;
+  }
+
+  .profile-bar > div:first-child { flex: 1; }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+
+  .tag-tour { background: var(--purple); color: #fff; }
+  .tag-venue { background: var(--accent2); color: #000; }
+  .tag-shows { background: var(--orange); color: #000; }
+
+  .info-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .pill strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
   @media (max-width: 480px) {
     .meta-row { grid-template-columns: 1fr; }
     .meta-row.three-col { grid-template-columns: 1fr 1fr; }
     .photo-buttons { flex-direction: column; }
+    .profile-bar { flex-direction: column; align-items: stretch; }
   }
 </style>
 </head>
@@ -472,28 +577,163 @@
 
   <div class="main-content" id="mainContent">
 
-    <!-- SHOW INFO -->
+    <!-- PRODUCTION PROFILE -->
     <div class="section">
-      <div class="section-title">Show Info</div>
+      <div class="section-title">Production Profile</div>
+      <div class="profile-bar">
+        <div>
+          <label>Load Profile</label>
+          <select id="profileSelect" onchange="loadProfile(this.value)">
+            <option value="">— New / Manual Entry —</option>
+          </select>
+        </div>
+        <button class="btn btn-secondary btn-small" onclick="saveProfile()" style="margin-bottom:1px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+          Save Profile
+        </button>
+        <button class="btn btn-secondary btn-small" onclick="deleteProfile()" style="margin-bottom:1px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- TOUR / PRODUCTION INFO -->
+    <div class="section section-collapsible" id="tourSection">
+      <div class="section-header" onclick="toggleSection('tourSection')">
+        <div class="section-title" style="margin-bottom:0">Tour &amp; Production</div>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="section-body" style="margin-top:12px;">
+        <div class="meta-row">
+          <div>
+            <label>Tour Name</label>
+            <input type="text" id="tourName" placeholder="e.g. SpongeBob World Tour 2026">
+          </div>
+          <div>
+            <label>Production Company</label>
+            <input type="text" id="productionCo" placeholder="e.g. Nickelodeon Live">
+          </div>
+        </div>
+        <div class="meta-row three-col">
+          <div>
+            <label>Tour Start Date</label>
+            <input type="date" id="tourStartDate">
+          </div>
+          <div>
+            <label>Tour End Date</label>
+            <input type="date" id="tourEndDate">
+          </div>
+          <div>
+            <label>Tour Duration</label>
+            <input type="text" id="tourDuration" placeholder="Auto-calculated" readonly style="color:var(--accent);">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VENUE & EVENT -->
+    <div class="section section-collapsible" id="venueSection">
+      <div class="section-header" onclick="toggleSection('venueSection')">
+        <div class="section-title" style="margin-bottom:0">Venue &amp; Event</div>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="section-body" style="margin-top:12px;">
+        <div class="meta-row">
+          <div>
+            <label>Venue Name</label>
+            <input type="text" id="venueName" placeholder="e.g. Meryal Peak Arena">
+          </div>
+          <div>
+            <label>Venue City / Location</label>
+            <input type="text" id="venueCity" placeholder="e.g. Doha, Qatar">
+          </div>
+        </div>
+        <div class="meta-row">
+          <div>
+            <label>Event Type</label>
+            <select id="eventType">
+              <option value="live_show">Live Show</option>
+              <option value="theme_park">Theme Park / Meet & Greet</option>
+              <option value="touring">Touring Production</option>
+              <option value="corporate">Corporate Event</option>
+              <option value="festival">Festival</option>
+              <option value="tv_film">TV / Film Production</option>
+              <option value="rehearsal">Rehearsal</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label>Venue Type</label>
+            <select id="venueType">
+              <option value="indoor">Indoor Arena</option>
+              <option value="outdoor">Outdoor Stage</option>
+              <option value="theater">Theater</option>
+              <option value="theme_park">Theme Park</option>
+              <option value="convention">Convention Center</option>
+              <option value="studio">Studio</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAILY SHOW DETAILS -->
+    <div class="section">
+      <div class="section-title">Daily Show Details</div>
       <div class="meta-row">
         <div>
           <label>Date</label>
           <input type="date" id="listDate">
         </div>
         <div>
-          <label>Show / Event</label>
+          <label>Show / Event Name</label>
           <input type="text" id="showName" placeholder="e.g. SB Meryal Peak">
+        </div>
+      </div>
+      <div class="meta-row three-col">
+        <div>
+          <label>Shows Today</label>
+          <input type="number" id="showsPerDay" min="1" max="10" value="1" onchange="updateShowNumbers()">
+        </div>
+        <div>
+          <label>This is Show #</label>
+          <select id="showNumber">
+            <option value="1">1</option>
+          </select>
+        </div>
+        <div>
+          <label>Show Duration</label>
+          <input type="text" id="showDuration" placeholder="e.g. 45 min">
+        </div>
+      </div>
+      <div class="meta-row three-col">
+        <div>
+          <label>Call Time</label>
+          <input type="text" id="callTime" placeholder="e.g. 09:00">
+        </div>
+        <div>
+          <label>Show Time</label>
+          <input type="text" id="showTime" placeholder="e.g. 10:30">
+        </div>
+        <div>
+          <label>Cast Size</label>
+          <input type="number" id="castSize" min="0" placeholder="e.g. 12">
         </div>
       </div>
       <div class="meta-row">
         <div>
-          <label>Wardrobe Dept.</label>
+          <label>Wardrobe Supervisor</label>
           <input type="text" id="wardrobeDept" placeholder="Head of Wardrobe">
         </div>
         <div>
           <label>Email (for PDF)</label>
           <input type="email" id="emailTo" placeholder="wardrobe@show.com">
         </div>
+      </div>
+      <div>
+        <label>Notes / Special Instructions</label>
+        <textarea id="showNotes" placeholder="e.g. Rain show — extra towels needed, quick change Act 2..."></textarea>
       </div>
     </div>
 
@@ -569,7 +809,11 @@
   <div class="action-bar">
     <button class="btn btn-success" onclick="exportPDF()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      Export PDF
+      PDF
+    </button>
+    <button class="btn btn-accent2" onclick="sendEmail()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Send Email
     </button>
     <button class="btn btn-primary" onclick="saveList()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -600,6 +844,19 @@ const DEFAULT_CHARACTERS = [
   'Octavius','Squidward','Anch. Boy','MG'
 ];
 
+const EVENT_TYPE_LABELS = {
+  live_show: 'Live Show', theme_park: 'Theme Park / Meet & Greet',
+  touring: 'Touring Production', corporate: 'Corporate Event',
+  festival: 'Festival', tv_film: 'TV / Film Production',
+  rehearsal: 'Rehearsal', other: 'Other'
+};
+
+const VENUE_TYPE_LABELS = {
+  indoor: 'Indoor Arena', outdoor: 'Outdoor Stage', theater: 'Theater',
+  theme_park: 'Theme Park', convention: 'Convention Center',
+  studio: 'Studio', other: 'Other'
+};
+
 let rows = [];
 let photoData = null;
 let currentListId = null;
@@ -607,7 +864,170 @@ let currentListId = null;
 function init() {
   document.getElementById('listDate').value = new Date().toISOString().split('T')[0];
   DEFAULT_CHARACTERS.forEach(name => addRow(name));
+  setupTourDurationCalc();
+  loadProfiles();
   loadLastSession();
+}
+
+function toggleSection(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+function setupTourDurationCalc() {
+  const start = document.getElementById('tourStartDate');
+  const end = document.getElementById('tourEndDate');
+  const calc = () => {
+    if (start.value && end.value) {
+      const s = new Date(start.value);
+      const e = new Date(end.value);
+      const days = Math.round((e - s) / 86400000);
+      if (days >= 0) {
+        const weeks = Math.floor(days / 7);
+        const rem = days % 7;
+        document.getElementById('tourDuration').value =
+          weeks > 0 ? `${weeks}w ${rem}d (${days} days)` : `${days} days`;
+      } else {
+        document.getElementById('tourDuration').value = 'Invalid range';
+      }
+    } else {
+      document.getElementById('tourDuration').value = '';
+    }
+  };
+  start.addEventListener('change', calc);
+  end.addEventListener('change', calc);
+}
+
+function updateShowNumbers() {
+  const n = parseInt(document.getElementById('showsPerDay').value) || 1;
+  const sel = document.getElementById('showNumber');
+  const cur = sel.value;
+  sel.innerHTML = '';
+  for (let i = 1; i <= n; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = i;
+    sel.appendChild(opt);
+  }
+  if (parseInt(cur) <= n) sel.value = cur;
+}
+
+function getProductionFields() {
+  return {
+    tourName: document.getElementById('tourName').value,
+    productionCo: document.getElementById('productionCo').value,
+    tourStartDate: document.getElementById('tourStartDate').value,
+    tourEndDate: document.getElementById('tourEndDate').value,
+    venueName: document.getElementById('venueName').value,
+    venueCity: document.getElementById('venueCity').value,
+    eventType: document.getElementById('eventType').value,
+    venueType: document.getElementById('venueType').value,
+    showsPerDay: document.getElementById('showsPerDay').value,
+    showNumber: document.getElementById('showNumber').value,
+    showDuration: document.getElementById('showDuration').value,
+    callTime: document.getElementById('callTime').value,
+    showTime: document.getElementById('showTime').value,
+    castSize: document.getElementById('castSize').value,
+    showNotes: document.getElementById('showNotes').value
+  };
+}
+
+function setProductionFields(d) {
+  if (!d) return;
+  if (d.tourName) document.getElementById('tourName').value = d.tourName;
+  if (d.productionCo) document.getElementById('productionCo').value = d.productionCo;
+  if (d.tourStartDate) document.getElementById('tourStartDate').value = d.tourStartDate;
+  if (d.tourEndDate) document.getElementById('tourEndDate').value = d.tourEndDate;
+  if (d.venueName) document.getElementById('venueName').value = d.venueName;
+  if (d.venueCity) document.getElementById('venueCity').value = d.venueCity;
+  if (d.eventType) document.getElementById('eventType').value = d.eventType;
+  if (d.venueType) document.getElementById('venueType').value = d.venueType;
+  if (d.showsPerDay) {
+    document.getElementById('showsPerDay').value = d.showsPerDay;
+    updateShowNumbers();
+  }
+  if (d.showNumber) document.getElementById('showNumber').value = d.showNumber;
+  if (d.showDuration) document.getElementById('showDuration').value = d.showDuration;
+  if (d.callTime) document.getElementById('callTime').value = d.callTime;
+  if (d.showTime) document.getElementById('showTime').value = d.showTime;
+  if (d.castSize) document.getElementById('castSize').value = d.castSize;
+  if (d.showNotes) document.getElementById('showNotes').value = d.showNotes;
+  // trigger tour duration recalc
+  document.getElementById('tourStartDate').dispatchEvent(new Event('change'));
+}
+
+// --- Production Profiles ---
+function getProfiles() {
+  return JSON.parse(localStorage.getItem('laundryProfiles') || '[]');
+}
+
+function saveProfiles(profiles) {
+  localStorage.setItem('laundryProfiles', JSON.stringify(profiles));
+}
+
+function loadProfiles() {
+  const profiles = getProfiles();
+  const sel = document.getElementById('profileSelect');
+  sel.innerHTML = '<option value="">— New / Manual Entry —</option>';
+  profiles.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.id;
+    opt.textContent = p.profileName;
+    sel.appendChild(opt);
+  });
+}
+
+function saveProfile() {
+  const name = prompt('Profile name (e.g. "SB Meryal Peak Tour"):');
+  if (!name) return;
+  const profiles = getProfiles();
+  const profile = {
+    id: Date.now().toString(),
+    profileName: name,
+    ...getProductionFields(),
+    show: document.getElementById('showName').value,
+    dept: document.getElementById('wardrobeDept').value,
+    email: document.getElementById('emailTo').value,
+    defaultCharacters: rows.map(r => r.name).filter(Boolean)
+  };
+  profiles.push(profile);
+  saveProfiles(profiles);
+  loadProfiles();
+  document.getElementById('profileSelect').value = profile.id;
+  toast('Profile saved!');
+}
+
+function loadProfile(id) {
+  if (!id) return;
+  const profiles = getProfiles();
+  const p = profiles.find(pr => pr.id === id);
+  if (!p) return;
+  setProductionFields(p);
+  if (p.show) document.getElementById('showName').value = p.show;
+  if (p.dept) document.getElementById('wardrobeDept').value = p.dept;
+  if (p.email) document.getElementById('emailTo').value = p.email;
+  if (p.defaultCharacters && p.defaultCharacters.length > 0) {
+    if (confirm('Load saved character list from this profile? (Current rows will be replaced)')) {
+      rows = [];
+      p.defaultCharacters.forEach(name => {
+        const rid = Date.now() + Math.random();
+        rows.push({ id: rid, name });
+      });
+      renderGrid();
+    }
+  }
+  toast('Profile loaded');
+}
+
+function deleteProfile() {
+  const sel = document.getElementById('profileSelect');
+  const id = sel.value;
+  if (!id) { toast('No profile selected'); return; }
+  if (!confirm('Delete this profile?')) return;
+  let profiles = getProfiles();
+  profiles = profiles.filter(p => p.id !== id);
+  saveProfiles(profiles);
+  loadProfiles();
+  toast('Profile deleted');
 }
 
 function addRow(name) {
@@ -719,6 +1139,7 @@ function getFormData() {
     show: document.getElementById('showName').value,
     dept: document.getElementById('wardrobeDept').value,
     email: document.getElementById('emailTo').value,
+    ...getProductionFields(),
     rows: rows.map(r => ({...r})),
     photo: photoData,
     savedAt: new Date().toISOString()
@@ -769,6 +1190,7 @@ function loadList(data) {
   document.getElementById('showName').value = data.show || '';
   document.getElementById('wardrobeDept').value = data.dept || '';
   document.getElementById('emailTo').value = data.email || '';
+  setProductionFields(data);
   rows = data.rows || [];
   if (data.photo) {
     photoData = data.photo;
@@ -790,11 +1212,14 @@ function showHistory() {
       const total = (l.rows || []).reduce((s, r) => {
         return s + CATEGORIES.reduce((a, c) => a + (parseInt(r[c]) || 0), 0) + parseExtrasCount(r.extras);
       }, 0);
+      const venue = l.venueName ? ` · ${l.venueName}` : '';
+      const tour = l.tourName ? ` · ${l.tourName}` : '';
+      const showNum = (l.showsPerDay && parseInt(l.showsPerDay) > 1) ? ` · Show ${l.showNumber||1}/${l.showsPerDay}` : '';
       return `
         <div class="saved-item" onclick="loadFromHistory('${l.id}')">
           <div class="info">
             <div class="show-name">${esc(l.show || 'Untitled')}</div>
-            <div class="date">${l.date || 'No date'} · ${(l.rows||[]).length} characters</div>
+            <div class="date">${l.date || 'No date'} · ${(l.rows||[]).length} chars${venue}${tour}${showNum}</div>
           </div>
           <div style="display:flex;align-items:center;gap:12px;">
             <div class="count">${total}</div>
@@ -835,7 +1260,7 @@ function deleteList(id) {
   toast('Deleted');
 }
 
-function exportPDF() {
+function buildPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF('p', 'mm', 'a4');
   const pageW = doc.internal.pageSize.getWidth();
@@ -843,6 +1268,7 @@ function exportPDF() {
   const show = document.getElementById('showName').value || 'Untitled';
   const dept = document.getElementById('wardrobeDept').value;
   const email = document.getElementById('emailTo').value;
+  const prod = getProductionFields();
 
   doc.setFillColor(10, 10, 15);
   doc.rect(0, 0, pageW, 297, 'F');
@@ -852,14 +1278,53 @@ function exportPDF() {
   doc.setTextColor(240, 192, 64);
   doc.text('LAUNDRY COUNT', pageW / 2, 20, { align: 'center' });
 
-  doc.setFontSize(10);
-  doc.setTextColor(180, 180, 200);
-  doc.text(`Show: ${show}`, 14, 32);
-  doc.text(`Date: ${date}`, 14, 38);
-  if (dept) doc.text(`Wardrobe: ${dept}`, 14, 44);
-  if (email) doc.text(`Email: ${email}`, pageW - 14, 32, { align: 'right' });
+  if (prod.tourName) {
+    doc.setFontSize(11);
+    doc.setTextColor(176, 96, 255);
+    doc.text(prod.tourName, pageW / 2, 28, { align: 'center' });
+  }
 
-  let startY = dept ? 52 : 48;
+  let infoY = prod.tourName ? 36 : 32;
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(180, 180, 200);
+
+  const leftInfo = [];
+  leftInfo.push(`Show: ${show}`);
+  leftInfo.push(`Date: ${date}`);
+  if (prod.venueName) leftInfo.push(`Venue: ${prod.venueName}${prod.venueCity ? ' — ' + prod.venueCity : ''}`);
+  if (prod.eventType) leftInfo.push(`Event: ${EVENT_TYPE_LABELS[prod.eventType] || prod.eventType}`);
+  if (dept) leftInfo.push(`Wardrobe: ${dept}`);
+
+  const rightInfo = [];
+  if (prod.showsPerDay && parseInt(prod.showsPerDay) > 1) {
+    rightInfo.push(`Show ${prod.showNumber || 1} of ${prod.showsPerDay} today`);
+  }
+  if (prod.showDuration) rightInfo.push(`Duration: ${prod.showDuration}`);
+  if (prod.callTime) rightInfo.push(`Call: ${prod.callTime}`);
+  if (prod.showTime) rightInfo.push(`Show Time: ${prod.showTime}`);
+  if (prod.castSize) rightInfo.push(`Cast: ${prod.castSize}`);
+  if (prod.productionCo) rightInfo.push(`Prod: ${prod.productionCo}`);
+  if (email) rightInfo.push(`Email: ${email}`);
+
+  leftInfo.forEach((line, i) => {
+    doc.text(line, 14, infoY + i * 5);
+  });
+  rightInfo.forEach((line, i) => {
+    doc.text(line, pageW - 14, infoY + i * 5, { align: 'right' });
+  });
+
+  let startY = infoY + Math.max(leftInfo.length, rightInfo.length) * 5 + 4;
+
+  if (prod.showNotes) {
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 170);
+    doc.setFont('helvetica', 'italic');
+    const noteLines = doc.splitTextToSize(`Notes: ${prod.showNotes}`, pageW - 28);
+    doc.text(noteLines, 14, startY);
+    startY += noteLines.length * 4 + 4;
+    doc.setFont('helvetica', 'normal');
+  }
 
   const headers = [['Character', 'Shirts/Tops', 'Pants/Legs', 'Towels', 'Socks (Pr)', 'Caps', 'Extras', 'Total']];
   const body = rows.map(r => {
@@ -943,9 +1408,7 @@ function exportPDF() {
         const imgH = Math.min(remainingH, 100);
         const imgW = imgH * 0.75;
         doc.addImage(photoData, 'JPEG', (pageW - imgW) / 2, imgY, imgW, imgH);
-      } catch(e) {
-        // skip photo if format not supported
-      }
+      } catch(e) {}
     }
   }
 
@@ -954,15 +1417,62 @@ function exportPDF() {
   doc.text('Generated by CueMaster Laundry Counter', pageW / 2, 290, { align: 'center' });
 
   const filename = `Laundry_${show.replace(/\s+/g, '_')}_${date}.pdf`;
+
+  return { doc, filename, grandTotal, show, date, dept, email, prod };
+}
+
+function exportPDF() {
+  const { doc, filename } = buildPDF();
+  doc.save(filename);
+  toast('PDF downloaded!');
+}
+
+function buildEmailBody(show, date, dept, prod, grandTotal) {
+  let body = `Hi,\n\nPlease find attached the laundry count for ${show} on ${date}.`;
+  if (prod.venueName) body += `\nVenue: ${prod.venueName}${prod.venueCity ? ', ' + prod.venueCity : ''}`;
+  if (prod.tourName) body += `\nTour: ${prod.tourName}`;
+  if (prod.showsPerDay && parseInt(prod.showsPerDay) > 1) body += `\nShow ${prod.showNumber||1} of ${prod.showsPerDay}`;
+  body += `\n\nTotal items: ${grandTotal}`;
+  body += `\n\nBest regards,\n${dept || 'Wardrobe Dept.'}`;
+  return body;
+}
+
+async function sendEmail() {
+  const { doc, filename, grandTotal, show, date, dept, email, prod } = buildPDF();
+
+  const subject = `Laundry Count - ${show} - ${date}`;
+  const body = buildEmailBody(show, date, dept, prod, grandTotal);
+  const pdfBlob = doc.output('blob');
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Try Web Share API with file attachment (works on iOS Safari, Android Chrome)
+  if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+    try {
+      await navigator.share({
+        title: subject,
+        text: body,
+        files: [pdfFile]
+      });
+      toast('Shared successfully!');
+      return;
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        toast('Share cancelled');
+        return;
+      }
+    }
+  }
+
+  // Fallback: download the PDF, then open mailto with pre-filled fields
   doc.save(filename);
 
   if (email) {
-    toast('PDF downloaded! Attach it to your email.');
+    toast('PDF downloaded — attach it to the email that opens next.');
     setTimeout(() => {
-      window.location.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent('Laundry Count - ' + show + ' - ' + date)}&body=${encodeURIComponent('Hi,\n\nPlease find attached the laundry count for ' + show + ' on ' + date + '.\n\nTotal items: ' + grandTotal + '\n\nBest regards,\n' + (dept || 'Wardrobe Dept.'))}`;
-    }, 1000);
+      window.location.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }, 800);
   } else {
-    toast('PDF downloaded!');
+    toast('PDF downloaded! Enter an email address to send.');
   }
 }
 
